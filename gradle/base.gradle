@@ -1,0 +1,13 @@
+ext{
+
+    app_version = '1.0-SNAPSHOT'
+    app_dep = [
+            kotlin_std:'org.jetbrains.kotlin:kotlin-stdlib-jdk8',
+            kotlin_coroutine_core:'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1',
+            grapth:'org.jgrapht:jgrapht-core:1.3.0']
+
+    test_dep = [
+            junit: "junit:junit:4.12",
+            testng: "org.testng:testng:6.11",
+            mockito: "org.mockito:mockito-core:2.+"]
+}

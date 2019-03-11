@@ -1,0 +1,28 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+apply from: "${project.rootDir.path}/gradle/base.gradle"
+
+group 'com.danielesergio.md.advance-algorithms'
+version app_version
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation app_dep.kotlin_std
+    implementation app_dep.grapth
+
+    testCompile test_dep.testng
+
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
