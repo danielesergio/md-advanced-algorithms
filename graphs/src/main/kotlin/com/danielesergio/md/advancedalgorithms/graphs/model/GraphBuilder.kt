@@ -7,9 +7,9 @@ object GraphBuilder {
 
     fun er(graphType: GraphType, vertexSize: Int, p: Double): Graph{
         val graph = GraphImpl(graphType, VertexHandlerImpl((0 until vertexSize).toMutableSet()), newEdgeHandler(vertexSize))
-        val onEdgeFound: (Edge) -> Unit = { edge ->
+        val onEdgeFound: (Int, Int) -> Unit = { v1,v2 ->
             if( Math.random() < p ){
-                graph.addEdge(edge)
+                graph.addEdge(v1, v2)
             }
         }
         loopAllPossibleEdge(graphType, graph.getVertices(), onEdgeFound)
@@ -45,7 +45,7 @@ object GraphBuilder {
 
         val graph = GraphImpl(graphType, VertexHandlerImpl((0 until vertexSize).toMutableSet()), newEdgeHandler(vertexSize))
 
-        val onEdgeFound: (Edge) -> Unit = { edge -> graph.addEdge(edge) }
+        val onEdgeFound: (Int,Int) -> Unit = { v1,v2 -> graph.addEdge(v1,v2) }
         val initialVertex = (0 until m).toMutableList() //start with a completed graph of m nodes
         loopAllPossibleEdge(graphType, initialVertex, onEdgeFound)
 
@@ -53,7 +53,7 @@ object GraphBuilder {
         (m until vertexSize).forEach{u->
             val v1 = runTrial(data, graphType)
             graph.addVertex(u)
-            v1.forEach{ v-> graph.addEdge(Edge(u,v)) }
+            v1.forEach{ v-> graph.addEdge(u,v) }
         }
 
         return graph
@@ -93,15 +93,15 @@ object GraphBuilder {
         return GraphImpl(graphType, VertexHandlerImpl(vertices), newEdgeHandler(vertices.size))
     }
 
-    private fun loopAllPossibleEdge(graphType: GraphType, vertex:Iterable<Int>, onEdge: (Edge) -> Unit ){
+    private fun loopAllPossibleEdge(graphType: GraphType, vertex:Iterable<Int>, onEdge: (Int,Int) -> Unit ){
         vertex.forEach{ v1 ->
             vertex.forEach{v2 ->
                 val isValidEdge = graphType.selfLoopAllowed || v1 != v2
                 if(isValidEdge){
-                    onEdge(Edge(v1,v2))
+                    onEdge(v1,v2)
                 }
                 if(isValidEdge && graphType.oriented){
-                    onEdge(Edge(v2, v1))
+                    onEdge(v2,v1)
                 }
             }
         }

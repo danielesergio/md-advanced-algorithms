@@ -7,14 +7,12 @@ class VertexHandlerImpl(private val vertices : MutableSet<Int>) : VertexHandler 
 
     override fun getVertices(): Collection<Int> = vertices
 
-    override fun addVertex(vertexToAdd: Int): VertexHandler {
+    override fun addVertex(vertexToAdd: Int) {
         vertices.add(vertexToAdd)
-        return this
     }
 
-    override fun removeVertex(vertexToRemove: Int): VertexHandler {
+    override fun removeVertex(vertexToRemove: Int) {
         vertices.remove(vertexToRemove)
-        return this
     }
 
     override fun hasVertex(vertex: Int): Boolean {

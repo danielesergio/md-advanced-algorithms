@@ -19,8 +19,8 @@ fun main(args : Array<String>) {
     val graph1 = GraphBuilder.newInstance(GraphType(selfLoopAllowed = false, oriented = true), (0 until vertexSize).toMutableSet())
     val graph2 = GraphBuilder.newInstance(GraphType(selfLoopAllowed = false, oriented = false), (0 until vertexSize).toMutableSet())
     edges.forEach{
-        graph1.addEdge(it)
-        graph2.addEdge(it)
+        graph1.addEdge(it.first,it.second)
+        graph2.addEdge(it.first,it.second)
     }
     println("oriented: (${graph1.getEdges()})")
     println("not oriented: (${graph2.getEdges()})")

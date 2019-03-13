@@ -4,87 +4,64 @@ package com.danielesergio.md.advancedalgorithms.graphs.model
  * @author Daniele Sergio
  */
 
-typealias actionOnEdge<T> = (Edge) -> T
+typealias actionOnEdge<T> = (Int,Int) -> T
 
 data class GraphImpl(override val type: GraphType, private val vertexHandler: VertexHandler, private val edgeHandler: EdgeHandler)
     : Graph, VertexHandler by vertexHandler, EdgeHandler by edgeHandler {
 
 
-    private val _addEdge : actionOnEdge<Unit>
+    private val _addEdge : (Int,Int,Int) -> Unit
     private val _removeEdge: actionOnEdge<Unit>
-    private val _hasEdge: actionOnEdge<Boolean>
     private val _getEdge: () -> Collection<Edge>
 
     init {
         if (type.oriented) {
-            _addEdge = { e -> edgeHandler.addEdge(e) }
-            _removeEdge = { e -> edgeHandler.removeEdge(e) }
-            _hasEdge = { e -> edgeHandler.hasEdge(e) }
+            _addEdge = { v1:Int, v2:Int, weight:Int -> edgeHandler.addEdge(v1, v2, weight) }
+            _removeEdge = { v1:Int, v2:Int -> edgeHandler.removeEdge(v1, v2) }
             _getEdge = { edgeHandler.getEdges() }
         } else {
-            _addEdge = { e ->
-                edgeHandler.addEdge(e)
-                edgeHandler.addEdge(e.reverse())
+            _addEdge = { v1:Int, v2:Int, weight:Int ->
+                edgeHandler.addEdge(v1, v2, weight)
+                edgeHandler.addEdge(v2, v1, weight)
             }
-            _removeEdge = { e ->
-                edgeHandler.removeEdge(e)
-                edgeHandler.removeEdge(e.reverse())
+            _removeEdge = { v1:Int, v2:Int ->
+                edgeHandler.removeEdge(v1, v2)
+                edgeHandler.removeEdge(v2, v1)
             }
-            _hasEdge = { e -> edgeHandler.hasEdge(e) || edgeHandler.hasEdge(e.reverse()) }
-            _getEdge = {
-                edgeHandler.getEdges().toSortedSet(
-                        Comparator { o1, o2 ->
-                            if (o1.first == o2.second && o1.second == o2.first) {
-                                0
-                            } else {
-                                edgeComparator(naturalOrder(), naturalOrder()).compare(o1,o2)
-                            }
-
-                        }
-                )
-
-            }
+            _getEdge = { edgeHandler.getEdges().filter { e -> e.first < e.second }  }
         }
 
     }
 
-    fun edgeComparator( firstComparator: Comparator<Int>, secondComparator: Comparator<Int>): Comparator<Edge> =
-            compareBy(firstComparator) { p: Edge -> p.first }
-                    .thenBy(secondComparator) { p: Edge -> p.second }
-
-    override fun removeEdge(edge: Edge): Graph {
-        _removeEdge(edge)
-        return this
+    override fun removeEdge(v1:Int, v2:Int) {
+        _removeEdge(v1,v2)
     }
 
-    override fun addEdge(edge: Edge): Graph {
-        if(!edge.isSelfLoop() || type.selfLoopAllowed) {
-            _addEdge(edge)
+    override fun addEdge(v1:Int, v2:Int, weight:Int) {
+        if(v1!=v2 || type.selfLoopAllowed) {
+            _addEdge(v1,v2,weight)
         } else {
-            println("$edge not added because self loop is not allowed")
+            println("($v1,$v2) not added because self loop is not allowed")
         }
-        return this
     }
 
-    override fun hasEdge(edge: Edge): Boolean {
-        return _hasEdge(edge)
+    override fun hasEdge(v1:Int, v2:Int): Boolean {
+        return edgeHandler.hasEdge(v1, v2)
     }
 
     override fun getEdges(): Collection<Edge> {
         return _getEdge()
     }
 
-    override fun addVertex(vertexToAdd: Int): Graph {
+    override fun addVertex(vertexToAdd: Int) {
         vertexHandler.addVertex(vertexToAdd)
-        return this
     }
 
-    override fun removeVertex(vertexToRemove: Int): Graph {
+    override fun removeVertex(vertexToRemove: Int) {
         vertexHandler.removeVertex(vertexToRemove)
         var edgesToRemove = IntArray(vertexHandler.getVertices().size){ vertexToRemove } zip vertexHandler.getVertices()
         edgesToRemove = if(!type.oriented){edgesToRemove} else {edgesToRemove.flatMap { listOf(it, it.reverse()) }}
-        edgesToRemove.forEach{edgeHandler.removeEdge(it)}
-        return this
+        edgesToRemove.forEach{edgeHandler.removeEdge(it.first, it.second)}//todo instead of use pair use int
     }
 
 }
