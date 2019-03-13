@@ -16,6 +16,27 @@ object GraphBuilder {
         return graph
     }
 
+    /*
+    Per dimostrare che la versione UDP e` corretta bisogna fare una dimostrazione anolaga a quella fatta per
+    DPA. Il caso base rimane invariato, mentre il caso induttivo e` leggermente diverso:
+
+    1.numNodes=u;
+    2.per ogni v ∈ V, il numero di copie di v in nodeNumbers è uguale a indeg(v)+1;
+    3.|nodeNumbers|=totindeg+|V|.
+
+
+    Supponiamo che la proprietà sia vera all’inizio di un’iterazione del ciclo.
+    La chiamata a RUNTRIAL(m) per prima cosa estrae i nodi da mettere in V' con la probabilità
+    richiesta (per ipotesiinduttiva). Dopodiché aggiorna le variabili globali incrementando
+    numNodes: poiché per ipotesiinduttiva numNodes=u−1 al passo precedente, dopo
+    l’incremento numNodes=u. L’inserimento di una nuova copia di v in nodeNumbers per ogni nodo
+    v ∈ V' aggiorna nodeNumbers come richiesto: il valore di indeg(v) di un nodo incrementa
+    di uno se v∈V', e rimane invariato altrimenti. Infine, poiché l’ultimo nodo aggiunto al grafo
+    ha |V| archi entranti, abbiamo che indeg(u)=|V| e quindi l’inserimento di |V| + 1 copie di
+    u in nodeNumbers è coerente con le proprietà richieste
+
+     */
+
     fun dpa(graphType: GraphType, vertexSize: Int, m:Int) : Graph{
 
         if(m > vertexSize){

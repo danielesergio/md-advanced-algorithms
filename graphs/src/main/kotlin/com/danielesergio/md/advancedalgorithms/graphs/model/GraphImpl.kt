@@ -37,7 +37,7 @@ data class GraphImpl(override val type: GraphType, private val vertexHandler: Ve
                             if (o1.first == o2.second && o1.second == o2.first) {
                                 0
                             } else {
-                                pairComparator<Int,Int>(naturalOrder(), naturalOrder()).compare(o1,o2)
+                                edgeComparator(naturalOrder(), naturalOrder()).compare(o1,o2)
                             }
 
                         }
@@ -48,12 +48,9 @@ data class GraphImpl(override val type: GraphType, private val vertexHandler: Ve
 
     }
 
-    fun <T, U> pairComparator(
-            firstComparator: Comparator<T>,
-            secondComparator: Comparator<U>
-    ): Comparator<Pair<T, U>> =
-            compareBy(firstComparator) { p: Pair<T, U> -> p.first }
-                    .thenBy(secondComparator) { p: Pair<T, U> -> p.second }
+    fun edgeComparator( firstComparator: Comparator<Int>, secondComparator: Comparator<Int>): Comparator<Edge> =
+            compareBy(firstComparator) { p: Edge -> p.first }
+                    .thenBy(secondComparator) { p: Edge -> p.second }
 
     override fun removeEdge(edge: Edge): Graph {
         _removeEdge(edge)

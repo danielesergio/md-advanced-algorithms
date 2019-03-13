@@ -1,3 +1,5 @@
+@file:JvmName("Test")
+
 package com.danielesergio.md.advancedalgorithms.graphs
 
 import com.danielesergio.md.advancedalgorithms.graphs.model.Edge
@@ -20,6 +22,9 @@ fun main(args : Array<String>) {
         graph1.addEdge(it)
         graph2.addEdge(it)
     }
+    println("oriented: (${graph1.getEdges()})")
+    println("not oriented: (${graph2.getEdges()})")
+
     graph1.getVertices().forEach{
         println("g1) neighbour of $it (in,out) (${graph1.inNeighbours(it)}, ${graph1.outNeighbours(it)})")
         println("g2) neighbour of $it (in,out) (${graph2.inNeighbours(it)}, ${graph2.outNeighbours(it)})")

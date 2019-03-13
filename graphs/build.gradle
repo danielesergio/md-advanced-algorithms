@@ -26,3 +26,9 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+task runExample(type: JavaExec) {
+    group = 'Exercise'
+    main ='com.danielesergio.md.advancedalgorithms.graphs.Test'
+    classpath = sourceSets.main.runtimeClasspath
+}
