@@ -60,7 +60,7 @@ data class GraphImpl(override val type: GraphType, private val vertexHandler: Ve
     override fun removeVertex(vertexToRemove: Int) {
         vertexHandler.removeVertex(vertexToRemove)
         var edgesToRemove = IntArray(vertexHandler.getVertices().size){ vertexToRemove } zip vertexHandler.getVertices()
-        edgesToRemove = if(!type.oriented){edgesToRemove} else {edgesToRemove.flatMap { listOf(it, it.reverse()) }}
+        edgesToRemove = if(type.oriented){edgesToRemove} else {edgesToRemove.flatMap { listOf(it, it.reverse()) }}
         edgesToRemove.forEach{edgeHandler.removeEdge(it.first, it.second)}//todo instead of use pair use int
     }
 

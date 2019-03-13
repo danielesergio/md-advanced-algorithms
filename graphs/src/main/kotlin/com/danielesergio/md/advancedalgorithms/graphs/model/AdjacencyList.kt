@@ -21,7 +21,7 @@ class AdjacencyList private constructor(private val adjList: MutableMap<Int, Mut
             = adjList.asIterable().flatMap { e -> IntArray(e.value.size){ e.key } zip e.value }
 
     override fun removeEdge(v1:Int, v2:Int) {
-        adjList.remove(v2)?.remove(v2)
+        adjList.getValue(v2)?.remove(v2)
     }
 
     override fun addEdge(v1:Int, v2:Int, weight:Int)  {

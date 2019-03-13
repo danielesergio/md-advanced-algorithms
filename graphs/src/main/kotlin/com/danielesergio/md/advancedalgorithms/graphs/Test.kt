@@ -35,10 +35,15 @@ fun main(args : Array<String>) {
             Edge(10,11),Edge(12,11),Edge(12,13),Edge(10,13),
             Edge(14,15),Edge(16,15))
 
-    val graph3 = GraphBuilder.newInstance(GraphType(selfLoopAllowed = false, oriented = false), (0 until 17).toMutableSet())
-    val cc = ConnectedComponentAlgorithm(graph3)
+    val graph3 = GraphBuilder.newInstance(GraphType(selfLoopAllowed = false, oriented = false), (0 .. 16).toMutableSet())
     edgesCC.forEach{graph3.addEdge(it.first,it.second)}
-    println(cc.parse())
+    while(graph3.getVertices().size > 1) {
+        val cc = ConnectedComponentAlgorithm(graph3)
+        cc.parse().forEach { println("$it \n") }
+        val vertexToRemove = graph3.getVertices().random()
+        println("removing random vertex: $vertexToRemove")
+        graph3.removeVertex(vertexToRemove)
+    }
 
 }
 
