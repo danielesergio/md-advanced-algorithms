@@ -1,6 +1,6 @@
-package com.danielesergio.md.advancedalgorithms.graphs.questions
+package com.danielesergio.md.advancedalgorithms.graph.algorithm
 
-import com.danielesergio.md.advancedalgorithms.graphs.model.Graph
+import com.danielesergio.md.advancedalgorithms.graph.model.Graph
 import java.lang.IllegalArgumentException
 
 /**
@@ -8,7 +8,7 @@ import java.lang.IllegalArgumentException
  */
 class ConnectedComponentAlgorithm(private val graph: Graph) {
 
-    val vertexColors:MutableMap<Int,Color> = graph.getVertices().map{ it to Color.WHITE }.toMap().toMutableMap()
+    val vertexColors:MutableMap<Int, Color> = graph.getVertices().map{ it to Color.WHITE }.toMap().toMutableMap()
 
 
     enum class Color{

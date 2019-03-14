@@ -1,4 +1,4 @@
-package com.danielesergio.md.advancedalgorithms.graphs.model
+package com.danielesergio.md.advancedalgorithms.graph.model
 
 /**
  * @author Daniele Sergio

@@ -1,11 +1,11 @@
 @file:JvmName("Test")
 
-package com.danielesergio.md.advancedalgorithms.graphs
+package com.danielesergio.md.advancedalgorithms.graph
 
-import com.danielesergio.md.advancedalgorithms.graphs.model.Edge
-import com.danielesergio.md.advancedalgorithms.graphs.model.GraphBuilder
-import com.danielesergio.md.advancedalgorithms.graphs.model.GraphType
-import com.danielesergio.md.advancedalgorithms.graphs.questions.ConnectedComponentAlgorithm
+import com.danielesergio.md.advancedalgorithms.graph.model.Edge
+import com.danielesergio.md.advancedalgorithms.graph.model.GraphBuilder
+import com.danielesergio.md.advancedalgorithms.graph.model.GraphType
+import com.danielesergio.md.advancedalgorithms.graph.algorithm.ConnectedComponentAlgorithm
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 

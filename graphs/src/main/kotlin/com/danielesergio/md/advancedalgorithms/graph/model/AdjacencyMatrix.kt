@@ -1,6 +1,4 @@
-package com.danielesergio.md.advancedalgorithms.graphs.model
-
-import javafx.scene.text.FontWeight
+package com.danielesergio.md.advancedalgorithms.graph.model
 
 
 /**
