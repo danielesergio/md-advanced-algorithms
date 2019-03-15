@@ -6,33 +6,41 @@ package com.danielesergio.md.advancedalgorithms.graph.model
 
 data class GraphType(val selfLoopAllowed:Boolean = false, val oriented:Boolean = false)
 
-typealias Edge = Pair<Int,Int>
-
-fun Edge.reverse() : Edge = Edge(second, first)
-fun Edge.isSelfLoop() : Boolean = first == second
-
-interface VertexHandler{
-    fun getVertices(): Collection<Int>
-    fun addVertex(vertexToAdd:Int)
-    fun removeVertex(vertexToRemove:Int)
-    fun hasVertex(vertex: Int): Boolean
+data class Edge<V>(val first:V, val second:V, val data: EdgeMetadata = EdgeMetadata.Empty){
+    fun reverse(): Edge<V> = copy(first=second, second = first)
+    fun isSelfLoop(): Boolean = first == second
 }
 
-interface EdgeHandler{
-    fun getEdges(): Collection<Edge>
-    fun removeEdge(v1:Int, v2:Int)
-    fun addEdge(v1:Int, v2:Int, weight: Int = 1)
-    fun hasEdge(v1:Int, v2:Int): Boolean
-    fun outNeighbours(vertex: Int): Collection<Int>
-    fun inNeighbours(vertex: Int): Collection<Int>
+sealed class EdgeMetadata{
+    data class SimpleEdge<T>(val data:T):EdgeMetadata()
+    data class WeightEdge<T>(val weight: Int,val data:T):EdgeMetadata()
+    object Empty:EdgeMetadata()
+    object NoEdge:EdgeMetadata()
 }
 
-interface Graph: EdgeHandler, VertexHandler {
+interface VertexHandler<V>{
+    fun getVertices(): Collection<V>
+    fun addVertex(vertexToAdd:V)
+    fun removeVertex(vertexToRemove:V)
+    fun hasVertex(vertex: V): Boolean
+}
+
+interface EdgeHandler<V>{
+    fun getEdges(): Collection<Edge<V>>
+    fun removeEdge(v1:V, v2:V)
+    fun addEdge(v1:V, v2:V, data: EdgeMetadata = EdgeMetadata.SimpleEdge(Unit))
+    fun hasEdge(v1:V, v2:V): Boolean
+    fun getEdge(v1:V, v2:V): Edge<V>
+    fun outNeighbours(vertex: V): Map<V, EdgeMetadata>
+    fun inNeighbours(vertex: V): Map<V, EdgeMetadata>
+}
+
+interface Graph<V>: EdgeHandler<V>, VertexHandler<V> {
     val type: GraphType
-    override fun hasVertex(vertex: Int): Boolean
-    override fun hasEdge(v1:Int, v2:Int): Boolean
-    override fun removeEdge(v1:Int, v2:Int)
-    override fun addEdge(v1:Int, v2:Int, weight: Int)
-    override fun addVertex(vertexToAdd :Int)
-    override fun removeVertex(vertexToRemove:Int)
+    override fun hasVertex(vertex: V): Boolean
+    override fun hasEdge(v1:V, v2:V): Boolean
+    override fun removeEdge(v1:V, v2:V)
+    override fun addEdge(v1:V, v2:V, data: EdgeMetadata)
+    override fun addVertex(vertexToAdd :V)
+    override fun removeVertex(vertexToRemove:V)
 }

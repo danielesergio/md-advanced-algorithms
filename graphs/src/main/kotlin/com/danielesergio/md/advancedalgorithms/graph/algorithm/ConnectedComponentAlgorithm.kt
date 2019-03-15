@@ -6,21 +6,21 @@ import java.lang.IllegalArgumentException
 /**
  * @author Daniele Sergio
  */
-class ConnectedComponentAlgorithm(private val graph: Graph) {
+class ConnectedComponentAlgorithm<V>(private val graph: Graph<V>) {
 
-    val vertexColors:MutableMap<Int, Color> = graph.getVertices().map{ it to Color.WHITE }.toMap().toMutableMap()
+    val vertexColors:MutableMap<V, Color> = graph.getVertices().map{ it to Color.WHITE }.toMap().toMutableMap()
 
 
     enum class Color{
         WHITE, GREY, BLACK
     }
 
-    fun parse():Set<Set<Int>>{
+    fun parse():Set<Set<V>>{
         if(graph.type.oriented){
             throw IllegalArgumentException("")
         }
 
-        val CC = mutableSetOf<Set<Int>>()
+        val CC = mutableSetOf<Set<V>>()
         graph.getVertices().forEach{v->
             if(vertexColors[v] == Color.WHITE){
                 CC.add(dfs_visited(v))
@@ -30,12 +30,12 @@ class ConnectedComponentAlgorithm(private val graph: Graph) {
         return CC
     }
 
-    private fun dfs_visited(u: Int):Set<Int>{
+    private fun dfs_visited(u: V):Set<V>{
         vertexColors[u] = Color.GREY
         val visited = mutableSetOf(u)
         graph.inNeighbours(u).forEach{ v ->
-            if(vertexColors[v] == Color.WHITE){
-                visited.addAll(dfs_visited(v))
+            if(vertexColors[v.key] == Color.WHITE){
+                visited.addAll(dfs_visited(v.key))
             }
         }
         vertexColors[u] = Color.BLACK

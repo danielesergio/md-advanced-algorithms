@@ -7,11 +7,11 @@ import java.io.File
  */
 object GraphBuilder {
 
-    fun loadFromResource(): Graph{
+    fun loadFromResource(): Graph<Int>{
 
         val vertexSize = 6474
         val vertices = mutableSetOf<Int>()
-        val edges = mutableListOf<Edge>()
+        val edges = mutableListOf<Edge<Int>>()
         File(this::class.java.classLoader.getResource("as20000102.txt").file)
                 .bufferedReader()
                 .lines()
@@ -29,8 +29,9 @@ object GraphBuilder {
         return g
     }
 
-    fun er(graphType: GraphType, vertexSize: Int, p: Double): Graph{
-        val graph = GraphImpl(graphType, VertexHandlerImpl((0 until vertexSize).toMutableSet()), newEdgeHandler(vertexSize))
+    fun er(graphType: GraphType, vertexSize: Int, p: Double): Graph<Int>{
+        val vertices = (0 until vertexSize).toMutableSet()
+        val graph = GraphImpl(graphType, VertexHandlerImpl(vertices), newEdgeHandler(vertices))
         val onEdgeFound: (Int, Int) -> Unit = { v1,v2 ->
             if( Math.random() < p ){
                 graph.addEdge(v1, v2)
@@ -61,13 +62,14 @@ object GraphBuilder {
 
      */
 
-    fun dpa(graphType: GraphType, vertexSize: Int, m:Int) : Graph{
+    fun dpa(graphType: GraphType, vertexSize: Int, m:Int) : Graph<Int>{
 
         if(m > vertexSize){
             throw IllegalArgumentException("m must be in [1,$vertexSize]")
         }
 
-        val graph = GraphImpl(graphType, VertexHandlerImpl((0 until vertexSize).toMutableSet()), newEdgeHandler(vertexSize))
+        val vertices = (0 until vertexSize).toMutableSet()
+        val graph = GraphImpl<Int>(graphType, VertexHandlerImpl(vertices), newEdgeHandler(vertices))
 
         val onEdgeFound: (Int,Int) -> Unit = { v1,v2 -> graph.addEdge(v1,v2) }
         val initialVertex = (0 until m).toMutableList() //start with a completed graph of m nodes
@@ -113,8 +115,8 @@ object GraphBuilder {
     }
 
 
-    fun newInstance(graphType: GraphType, vertices:MutableSet<Int>): Graph{
-        return GraphImpl(graphType, VertexHandlerImpl(vertices), newEdgeHandler(vertices.size))
+    fun <V: Comparable<V>>newInstance(graphType: GraphType, vertices:MutableSet<V>): Graph<V>{
+        return GraphImpl(graphType, VertexHandlerImpl(vertices), newEdgeHandler(vertices))
     }
 
     private fun loopAllPossibleEdge(graphType: GraphType, vertex:Iterable<Int>, onEdge: (Int,Int) -> Unit ){
@@ -131,9 +133,8 @@ object GraphBuilder {
         }
     }
 
-    private fun newEdgeHandler(vertexSize: Int, isSparse:Boolean = true): EdgeHandler {
+    private fun <V>newEdgeHandler(vertices:Set<V>, isSparse:Boolean = true): EdgeHandler<V> {
         //todo implement better heuristic to choose which implementation use  |E|=O(|V|) sparse graph; |E|=O(|V|2) dense graph
-        val vertices = (0 until vertexSize).toSet()
         return if (isSparse) { //todo find a real heuristic
             AdjacencyList.newInstance(vertices)
         }else {

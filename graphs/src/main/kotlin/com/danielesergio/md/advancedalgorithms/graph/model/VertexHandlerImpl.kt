@@ -3,19 +3,19 @@ package com.danielesergio.md.advancedalgorithms.graph.model
 /**
  * @author Daniele Sergio
  */
-class VertexHandlerImpl(private val vertices : MutableSet<Int>) : VertexHandler {
+class VertexHandlerImpl<V>(private val vertices : MutableSet<V>) : VertexHandler<V> {
 
-    override fun getVertices(): Collection<Int> = vertices
+    override fun getVertices(): Collection<V> = vertices
 
-    override fun addVertex(vertexToAdd: Int) {
+    override fun addVertex(vertexToAdd: V) {
         vertices.add(vertexToAdd)
     }
 
-    override fun removeVertex(vertexToRemove: Int) {
+    override fun removeVertex(vertexToRemove: V) {
         vertices.remove(vertexToRemove)
     }
 
-    override fun hasVertex(vertex: Int): Boolean {
+    override fun hasVertex(vertex: V): Boolean {
         return vertices.contains(vertex)
     }
 }
