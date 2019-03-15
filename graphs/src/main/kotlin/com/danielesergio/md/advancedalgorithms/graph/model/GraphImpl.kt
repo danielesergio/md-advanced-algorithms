@@ -38,10 +38,14 @@ data class GraphImpl(override val type: GraphType, private val vertexHandler: Ve
     }
 
     override fun addEdge(v1:Int, v2:Int, weight:Int) {
-        if(v1!=v2 || type.selfLoopAllowed) {
-            _addEdge(v1,v2,weight)
-        } else {
-            println("($v1,$v2) not added because self loop is not allowed")
+        when{
+
+            hasEdge(v1, v2) -> println("($v1,$v2) already present in graph (parallel edge not yet supported)")
+
+            v1!=v2 || type.selfLoopAllowed -> _addEdge(v1,v2,weight)
+
+            else ->  println("($v1,$v2) not added because self loop is not allowed")
+
         }
     }
 

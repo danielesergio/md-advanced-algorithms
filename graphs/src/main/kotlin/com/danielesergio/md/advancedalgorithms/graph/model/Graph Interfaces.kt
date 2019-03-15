@@ -4,7 +4,7 @@ package com.danielesergio.md.advancedalgorithms.graph.model
  * @author Daniele Sergio
  */
 
-data class GraphType(val selfLoopAllowed:Boolean, val oriented:Boolean)
+data class GraphType(val selfLoopAllowed:Boolean = false, val oriented:Boolean = false)
 
 typealias Edge = Pair<Int,Int>
 

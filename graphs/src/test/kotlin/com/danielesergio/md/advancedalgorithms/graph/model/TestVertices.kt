@@ -1,4 +1,4 @@
-package com.danielesergio.md.advancedalgorithms.graphs.model
+package com.danielesergio.md.advancedalgorithms.graph.model
 
 import org.testng.Assert.assertEquals
 import org.testng.annotations.DataProvider

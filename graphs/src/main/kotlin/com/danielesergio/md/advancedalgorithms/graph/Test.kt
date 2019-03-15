@@ -15,6 +15,9 @@ import java.time.temporal.ChronoUnit
 
 fun main(args : Array<String>) {
 
+
+    val g = GraphBuilder.loadFromResource()
+    g.getVertices().size
     val edges = setOf(Edge(0,1), Edge(1,2), Edge(2,3), Edge(2,4), Edge(2,5), Edge(5,6), Edge(6,7), Edge(6,8), Edge(8,9))
     val vertexSize = 10
     val graph1 = GraphBuilder.newInstance(GraphType(selfLoopAllowed = false, oriented = true), (0 until vertexSize).toMutableSet())

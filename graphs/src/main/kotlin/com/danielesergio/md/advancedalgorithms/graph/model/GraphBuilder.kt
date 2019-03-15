@@ -1,9 +1,33 @@
 package com.danielesergio.md.advancedalgorithms.graph.model
 
+import java.io.File
+
 /**
  * @author Daniele Sergio
  */
 object GraphBuilder {
+
+    fun loadFromResource(): Graph{
+
+        val vertexSize = 6474
+        val vertices = mutableSetOf<Int>()
+        val edges = mutableListOf<Edge>()
+        File(this::class.java.classLoader.getResource("as20000102.txt").file)
+                .bufferedReader()
+                .lines()
+                .forEach{
+                    if(!it.startsWith('#')){
+                        val edgeVertices = it.split("\t")
+                        val edge = Edge(edgeVertices[0].toInt(), edgeVertices[1].toInt())
+                        edges.add(edge)
+                        vertices.add(edge.first)
+                        vertices.add(edge.second)
+                    }
+                }
+        val g = newInstance(GraphType(),vertices)
+        edges.forEach{g.addEdge(it.first,it.second)}
+        return g
+    }
 
     fun er(graphType: GraphType, vertexSize: Int, p: Double): Graph{
         val graph = GraphImpl(graphType, VertexHandlerImpl((0 until vertexSize).toMutableSet()), newEdgeHandler(vertexSize))
