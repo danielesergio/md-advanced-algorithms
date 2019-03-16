@@ -1,5 +1,7 @@
 package com.danielesergio.md.advancedalgorithms.graph.model
 
+import org.slf4j.LoggerFactory
+
 /**
  * @author Daniele Sergio
  */
@@ -9,6 +11,9 @@ typealias actionOnEdge<T,V> = (V,V) -> T
 data class GraphImpl<V:Comparable<V>>(override val type: GraphType, private val vertexHandler: VertexHandler<V>, private val edgeHandler: EdgeHandler<V>)
     : Graph<V>, VertexHandler<V> by vertexHandler, EdgeHandler<V> by edgeHandler {
 
+    companion object {
+        val LOG = LoggerFactory.getLogger(GraphImpl::class.java)
+    }
 
     private val _addEdge : (V,V,EdgeMetadata) -> Unit
     private val _removeEdge: actionOnEdge<Unit,V>
@@ -40,11 +45,11 @@ data class GraphImpl<V:Comparable<V>>(override val type: GraphType, private val 
     override fun addEdge(v1:V, v2:V, data:EdgeMetadata) {
         when{
 
-            hasEdge(v1, v2) -> println("($v1,$v2) already present in graph (parallel edge not yet supported)")
+            hasEdge(v1, v2) -> LOG.info("($v1,$v2) already present in graph (parallel edge not yet supported)")
 
             v1!=v2 || type.selfLoopAllowed -> _addEdge(v1,v2,data)
 
-            else ->  println("($v1,$v2) not added because self loop is not allowed")
+            else ->  LOG.info("($v1,$v2) not added because self loop is not allowed")
 
         }
     }
