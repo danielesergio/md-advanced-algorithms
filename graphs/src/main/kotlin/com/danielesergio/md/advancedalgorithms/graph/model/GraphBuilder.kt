@@ -9,7 +9,6 @@ object GraphBuilder {
 
     fun loadFromResource(): Graph<Int>{
 
-        val vertexSize = 6474
         val vertices = mutableSetOf<Int>()
         val edges = mutableListOf<Edge<Int>>()
         File(this::class.java.classLoader.getResource("as20000102.txt").file)

@@ -6,10 +6,7 @@ package com.danielesergio.md.advancedalgorithms.graph.model
 
 data class GraphType(val selfLoopAllowed:Boolean = false, val oriented:Boolean = false)
 
-data class Edge<V>(val first:V, val second:V, val data: EdgeMetadata = EdgeMetadata.Empty){
-    fun reverse(): Edge<V> = copy(first=second, second = first)
-    fun isSelfLoop(): Boolean = first == second
-}
+data class Edge<V>(val first:V, val second:V, val data: EdgeMetadata = EdgeMetadata.Empty)
 
 sealed class EdgeMetadata{
     data class SimpleEdge<T>(val data:T):EdgeMetadata()

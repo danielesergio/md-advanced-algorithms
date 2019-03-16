@@ -12,7 +12,7 @@ data class GraphImpl<V:Comparable<V>>(override val type: GraphType, private val 
     : Graph<V>, VertexHandler<V> by vertexHandler, EdgeHandler<V> by edgeHandler {
 
     companion object {
-        val LOG = LoggerFactory.getLogger(GraphImpl::class.java)
+        val LOG = LoggerFactory.getLogger(GraphImpl::class.java)!!
     }
 
     private val _addEdge : (V,V,EdgeMetadata) -> Unit
