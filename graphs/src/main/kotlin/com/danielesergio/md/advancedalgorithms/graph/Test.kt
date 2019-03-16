@@ -2,10 +2,15 @@
 
 package com.danielesergio.md.advancedalgorithms.graph
 
+import com.danielesergio.md.advancedalgorithms.graph.algorithm.ConnectedComponent
 import com.danielesergio.md.advancedalgorithms.graph.model.Edge
 import com.danielesergio.md.advancedalgorithms.graph.model.GraphBuilder
 import com.danielesergio.md.advancedalgorithms.graph.model.GraphType
 import com.danielesergio.md.advancedalgorithms.graph.algorithm.ConnectedComponentAlgorithm
+import com.danielesergio.md.advancedalgorithms.graph.model.Graph
+import org.jgrapht.graph.SimpleGraph
+import java.time.Duration
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -14,7 +19,7 @@ import java.time.temporal.ChronoUnit
  */
 
 fun main(args : Array<String>) {
-    val edges = setOf(Edge(0,1), Edge(1,2), Edge(2,3), Edge(2,4), Edge(2,5), Edge(5,6), Edge(6,7), Edge(6,8), Edge(8,9))
+ /*   val edges = setOf(Edge(0,1), Edge(1,2), Edge(2,3), Edge(2,4), Edge(2,5), Edge(5,6), Edge(6,7), Edge(6,8), Edge(8,9))
     val vertexSize = 10
     val graph1 = GraphBuilder.newInstance(GraphType(selfLoopAllowed = false, oriented = true), (0 until vertexSize).toMutableSet())
     val graph2 = GraphBuilder.newInstance(GraphType(selfLoopAllowed = false, oriented = false), (0 until vertexSize).toMutableSet())
@@ -22,6 +27,7 @@ fun main(args : Array<String>) {
         graph1.addEdge(it.first,it.second)
         graph2.addEdge(it.first,it.second)
     }
+    */
 //    println("oriented: (${graph1.getEdges()})")
 //    println("not oriented: (${graph2.getEdges()})")
 //
@@ -30,21 +36,58 @@ fun main(args : Array<String>) {
 //        println("g2) neighbour of $it (in,out) (${graph2.inNeighbours(it)}, ${graph2.outNeighbours(it)})")
 //    }
 
-    val edgesCC = setOf(Edge(0,1), Edge(1,2), Edge(2,3), Edge(2,4), Edge(2,5), Edge(5,6), Edge(6,7), Edge(6,8), Edge(8,9),
+/*    val edgesCC = setOf(Edge(0,1), Edge(1,2), Edge(2,3), Edge(2,4), Edge(2,5), Edge(5,6), Edge(6,7), Edge(6,8), Edge(8,9),
             Edge(10,11),Edge(12,11),Edge(12,13),Edge(10,13),
             Edge(14,15),Edge(16,15))
 
     val graph3 = GraphBuilder.newInstance(GraphType(selfLoopAllowed = false, oriented = false), (0 .. 16).toMutableSet())
     edgesCC.forEach{graph3.addEdge(it.first,it.second)}
-    while(graph3.getVertices().size > 1) {
-        val cc = ConnectedComponentAlgorithm<Int>(graph3)
-        cc.parse().forEach { println("$it \n") }
-        val vertexToRemove = graph3.getVertices().random()
-        println("removing random vertex: $vertexToRemove")
-        graph3.removeVertex(vertexToRemove)
+
+*/
+//    resilentOfGrapOriginalVersion(GraphBuilder.loadFromResource())
+    resilentOfGrapEditedVersion(GraphBuilder.loadFromResource())
+
+
+}
+
+private fun resilentOfGrapEditedVersion(graph: Graph<Int>) {
+    val startAll = Instant.now()
+    var int = 1
+    var vertices = graph.getVertices().toMutableSet()
+    val vertexMappedToCC = mutableMapOf<Int,ConnectedComponent<Int>>()
+    while (graph.getVertices().size > 1) {
+        val timeComputation = Instant.now()
+        val cc = ConnectedComponentAlgorithm.editedVersion(graph,vertexMappedToCC, vertices)
+//        cc.parse().forEach { println("$it \n") }
+        val vertexToRemove = graph.getVertices().random()
+//        println("removing random vertex: $vertexToRemove")
+        graph.removeVertex(vertexToRemove)
+        vertices = vertexMappedToCC.getValue(vertexToRemove)
+        vertices.remove(vertexToRemove)
+        //1700895 old version
+        //0096565
+        println("[${cc.size}]time to finish ${int++} computation: ${Duration.between(timeComputation, Instant.now()).toMillis()}")
+
     }
+    println("time to finish all computation: ${Duration.between(startAll, Instant.now()).seconds}")
+}
 
+private fun resilentOfGrapOriginalVersion(graph: Graph<Int>) {
+    val startAll = Instant.now()
+    var int = 1
+    while (graph.getVertices().size > 1) {
+        val timeComputation = Instant.now()
+        val cc = ConnectedComponentAlgorithm.originalVersion(graph)
+//        cc.parse().forEach { println("$it \n") }
+        val vertexToRemove = graph.getVertices().random()
+//        println("removing random vertex: $vertexToRemove")
+        graph.removeVertex(vertexToRemove)
+        //1700895
+        //0096565
+//        println("[${cc.size}]time to finish ${int++} computation: ${Duration.between(timeComputation, Instant.now()).toMillis()}")
 
+    }
+    println("time to finish all computation: ${Duration.between(startAll, Instant.now()).seconds}")
 }
 
 private fun generateGraphWithDPA(vertexSize:Int, m:Int) {
