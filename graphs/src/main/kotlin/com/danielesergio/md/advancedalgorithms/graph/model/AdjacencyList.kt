@@ -36,4 +36,9 @@ class AdjacencyList<V> private constructor(private val adjList: MutableMap<V, Mu
     override fun inNeighbours(vertex: V): Map<V, EdgeMetadata> = adjList.filter { (_,v)->v.containsKey(vertex) }
             .map { (a,b) -> a to b.getValue(vertex) }.toMap()
 
+    override fun clone(): EdgeHandler<V> {
+        val adjListCopy = adjList.toMutableMap()
+        adjListCopy.forEach{(k,v) -> adjListCopy[k] = v.toMutableMap()}
+        return AdjacencyList(adjListCopy)
+    }
 }

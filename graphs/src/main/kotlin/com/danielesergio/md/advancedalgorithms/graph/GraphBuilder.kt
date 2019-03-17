@@ -137,10 +137,10 @@ object GraphBuilder {
 
     private fun loopAllPossibleEdge(graphType: GraphType, vertex:Iterable<Int>, onEdge: (Int, Int) -> Unit ){
         vertex.forEach{ v1 ->
-            vertex.forEach{v2 ->
+            vertex.forEach innerLoop@{v2 ->
                 val isValidEdge = graphType.selfLoopAllowed || v1 != v2
-                if(!isValidEdge){
-                    return
+                if(!isValidEdge) {
+                    return@innerLoop
                 }
                 onEdge(v1,v2)
                 if(graphType.oriented){

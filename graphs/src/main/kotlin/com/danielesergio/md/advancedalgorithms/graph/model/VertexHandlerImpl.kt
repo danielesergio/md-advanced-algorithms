@@ -18,4 +18,8 @@ class VertexHandlerImpl<V>(private val vertices : MutableSet<V>) : VertexHandler
     override fun hasVertex(vertex: V): Boolean {
         return vertices.contains(vertex)
     }
+
+    override fun clone(): VertexHandler<V> {
+        return VertexHandlerImpl(vertices.toMutableSet())
+    }
 }

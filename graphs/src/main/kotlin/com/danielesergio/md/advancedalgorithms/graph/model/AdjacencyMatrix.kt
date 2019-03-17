@@ -56,4 +56,10 @@ class  AdjacencyMatrix<V> private constructor(private val adjMatrix: MutableMap<
         return adjMatrix.filter { (_,v) ->  v.getValue(vertex) !is EdgeMetadata.NoEdge }
                 .entries.map { it.key to it.value.getValue(vertex) }.toMap()
     }
+
+    override fun clone(): EdgeHandler<V> {
+        val adjMatrixCopy = adjMatrix.toMutableMap()
+        adjMatrixCopy.forEach{ (k,v) -> adjMatrixCopy[k] = v.toMutableMap()}
+        return AdjacencyMatrix(adjMatrixCopy)
+    }
 }

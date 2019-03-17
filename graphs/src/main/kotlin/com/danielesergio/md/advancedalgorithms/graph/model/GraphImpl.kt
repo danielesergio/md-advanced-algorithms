@@ -70,9 +70,11 @@ data class GraphImpl<V:Comparable<V>>(override val type: GraphType, private val 
         vertexHandler.removeVertex(vertexToRemove)
         val list = mutableListOf<V>()
         repeat(vertexHandler.getVertices().size) {list.add(vertexToRemove)}
-        var edgesToRemove = list zip vertexHandler.getVertices()
-        edgesToRemove = if(type.oriented){edgesToRemove} else {edgesToRemove.flatMap { listOf(it, Pair(first = it.second, second = it.first)) }}
-        edgesToRemove.forEach{edgeHandler.removeEdge(it.first, it.second)}//todo instead of use pair use V
+        val edgesToRemove = list zip vertexHandler.getVertices()
+        edgesToRemove.forEach{_removeEdge(it.first, it.second)}
     }
 
+    override fun clone(): GraphImpl<V> {
+        return this.copy(vertexHandler = vertexHandler.clone(), edgeHandler = edgeHandler.clone())
+    }
 }

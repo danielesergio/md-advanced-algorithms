@@ -15,11 +15,12 @@ sealed class EdgeMetadata{
     object NoEdge:EdgeMetadata()
 }
 
-interface VertexHandler<V>{
+interface VertexHandler<V> {
     fun getVertices(): Collection<V>
-    fun addVertex(vertexToAdd:V)
-    fun removeVertex(vertexToRemove:V)
+    fun addVertex(vertexToAdd: V)
+    fun removeVertex(vertexToRemove: V)
     fun hasVertex(vertex: V): Boolean
+    fun clone(): VertexHandler<V>
 }
 
 interface EdgeHandler<V>{
@@ -30,6 +31,7 @@ interface EdgeHandler<V>{
     fun getEdge(v1:V, v2:V): Edge<V>
     fun outNeighbours(vertex: V): Map<V, EdgeMetadata>
     fun inNeighbours(vertex: V): Map<V, EdgeMetadata>
+    fun clone():EdgeHandler<V>
 }
 
 interface Graph<V>: EdgeHandler<V>, VertexHandler<V> {
@@ -40,4 +42,5 @@ interface Graph<V>: EdgeHandler<V>, VertexHandler<V> {
     override fun addEdge(v1:V, v2:V, data: EdgeMetadata)
     override fun addVertex(vertexToAdd :V)
     override fun removeVertex(vertexToRemove:V)
+    override fun clone():Graph<V>
 }
