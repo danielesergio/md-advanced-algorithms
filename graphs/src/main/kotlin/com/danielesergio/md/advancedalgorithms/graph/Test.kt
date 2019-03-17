@@ -44,6 +44,13 @@ private fun neighbourTest(){
         LOG.info("g1) neighbour of $it (in,out) (${graph1.inNeighbours(it)}, ${graph1.outNeighbours(it)})")
         LOG.info("g2) neighbour of $it (in,out) (${graph2.inNeighbours(it)}, ${graph2.outNeighbours(it)})")
     }
+
+    LOG.info("${NodeGrade.calculateGradeDistribution(graph2)}")
+
+    LOG.info("${NodeGrade.calculateJointGradeDistribution(graph1)}")
+
+    LOG.info("node with max grade ${NodeGrade.nodeWithMaxGrade(graph2)}")
+
 }
 
 private fun simpleCCTest(){
