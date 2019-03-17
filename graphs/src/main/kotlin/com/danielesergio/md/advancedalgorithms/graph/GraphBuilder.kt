@@ -40,7 +40,7 @@ object GraphBuilder {
                 graph.addEdge(v1, v2)
             }
         }
-        loopAllPossibleEdge(graphType, graph.getVertices(), onEdgeFound)
+        loopAllPossibleEdge(graph.getVertices(), onEdgeFound)
         return graph
     }
 
@@ -115,7 +115,7 @@ object GraphBuilder {
 
             val onEdgeFound: (Int,Int) -> Unit = { v1,v2 -> graph.addEdge(v1,v2) }
             val initialVertices = (0 until m).toMutableList() //start with a completed graph of m nodes
-            loopAllPossibleEdge(graphType, initialVertices, onEdgeFound)
+            loopAllPossibleEdge(initialVertices, onEdgeFound)
             return graph
         }
 
@@ -135,17 +135,10 @@ object GraphBuilder {
         return GraphImpl(graphType, VertexHandlerImpl(vertices), newEdgeHandler(vertices))
     }
 
-    private fun loopAllPossibleEdge(graphType: GraphType, vertex:Iterable<Int>, onEdge: (Int, Int) -> Unit ){
+    private fun loopAllPossibleEdge(vertex:Iterable<Int>, onEdge: (Int, Int) -> Unit ){
         vertex.forEach{ v1 ->
-            vertex.forEach innerLoop@{v2 ->
-                val isValidEdge = graphType.selfLoopAllowed || v1 != v2
-                if(!isValidEdge) {
-                    return@innerLoop
-                }
+            vertex.forEach {v2 ->
                 onEdge(v1,v2)
-                if(graphType.oriented){
-                    onEdge(v2,v1)
-                }
             }
         }
     }
