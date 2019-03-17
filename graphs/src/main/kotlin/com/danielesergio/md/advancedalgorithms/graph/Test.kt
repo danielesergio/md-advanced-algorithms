@@ -6,9 +6,9 @@ import com.danielesergio.md.advancedalgorithms.graph.algorithm.ConnectedComponen
 import com.danielesergio.md.advancedalgorithms.graph.model.Edge
 import com.danielesergio.md.advancedalgorithms.graph.model.GraphBuilder
 import com.danielesergio.md.advancedalgorithms.graph.model.GraphType
-import com.danielesergio.md.advancedalgorithms.graph.algorithm.ConnectedComponentAlgorithm
+import com.danielesergio.md.advancedalgorithms.graph.algorithm.ConnectedComponentCalculator
+import com.danielesergio.md.advancedalgorithms.graph.algorithm.NodeGrade
 import com.danielesergio.md.advancedalgorithms.graph.model.Graph
-import org.jgrapht.graph.SimpleGraph
 import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.Instant
@@ -24,7 +24,8 @@ val LOG = LoggerFactory.getLogger("root")!!
 fun main(args : Array<String>) {
     System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "INFO")
 //    resilentOfGrapOriginalVersion(GraphBuilder.loadFromResource())
-    resilentOfGrapEditedVersion(GraphBuilder.loadFromResource())
+//    resilentOfGrapEditedVersion(GraphBuilder.loadFromResource())
+    neighbourTest()
 }
 
 private fun neighbourTest(){
@@ -53,7 +54,7 @@ private fun simpleCCTest(){
     val graph = GraphBuilder.newInstance(GraphType(selfLoopAllowed = false, oriented = false), (0 .. 16).toMutableSet())
     edgesCC.forEach{graph.addEdge(it.first,it.second)}
 
-    ConnectedComponentAlgorithm.originalVersion(graph).forEach{
+    ConnectedComponentCalculator.originalVersion(graph).forEach{
         LOG.info("$it")
     }
 
@@ -67,7 +68,7 @@ private fun resilentOfGrapEditedVersion(graph: Graph<Int>) {
     val vertexMappedToCC = mutableMapOf<Int,ConnectedComponent<Int>>()
     while (graph.getVertices().size > 1) {
         val timeComputation = Instant.now()
-        val cc = ConnectedComponentAlgorithm.editedVersion(graph,vertexMappedToCC, vertices)
+        val cc = ConnectedComponentCalculator.editedVersion(graph,vertexMappedToCC, vertices)
         if(LOG.isDebugEnabled){
             cc.forEach { LOG.debug("$it") }
         }
@@ -89,7 +90,7 @@ private fun resilentOfGrapOriginalVersion(graph: Graph<Int>) {
     var int = 1
     while (graph.getVertices().size > 1) {
         val timeComputation = Instant.now()
-        val cc = ConnectedComponentAlgorithm.originalVersion(graph)
+        val cc = ConnectedComponentCalculator.originalVersion(graph)
         if(LOG.isDebugEnabled){
             cc.forEach { LOG.debug("$it") }
         }

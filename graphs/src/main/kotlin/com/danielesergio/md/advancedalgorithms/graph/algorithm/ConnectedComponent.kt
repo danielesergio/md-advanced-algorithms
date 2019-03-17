@@ -9,7 +9,7 @@ import java.lang.IllegalArgumentException
 
 typealias ConnectedComponent<V> = MutableSet<V>
 
-object ConnectedComponentAlgorithm {
+object ConnectedComponentCalculator {
 
 
     enum class Color{
