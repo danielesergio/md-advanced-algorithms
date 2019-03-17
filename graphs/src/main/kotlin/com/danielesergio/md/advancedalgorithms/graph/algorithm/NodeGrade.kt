@@ -22,31 +22,34 @@ object NodeGrade {
 
     }
 
-    fun <V> nodeWithMaxGrade(graph:Graph<V>):V?{
+    fun <V> nodeWithMaxGrade(graph:Graph<V>):Pair<V,Int>?{
         if(graph.type.oriented){
             LOG.warn("For oriented graph you should use one among nodeWithMaxInGrade, nodeWithMaxOutGrade")
         }
 
         return graph.getVertices()
-                .maxWith(compareBy{graph.outNeighbours(it).size})
+                .map { it to graph.outNeighbours(it).size }
+                .maxWith(compareBy{it.second})
     }
 
-    fun <V> nodeWithMaxInGrade(graph:Graph<V>):V?{
+    fun <V> nodeWithMaxInGrade(graph:Graph<V>):Pair<V,Int>?{
         if(!graph.type.oriented){
             LOG.warn("For oriented graph you should use nodeWithMaxGrade")
         }
 
         return graph.getVertices()
-                .maxWith(compareBy{graph.inNeighbours(it).size})
+                .map { it to graph.inNeighbours(it).size }
+                .maxWith(compareBy{it.second})
     }
 
-    fun <V> nodeWithMaxOutGrade(graph:Graph<V>):V?{
+    fun <V> nodeWithMaxOutGrade(graph:Graph<V>):Pair<V,Int>?{
         if(!graph.type.oriented){
             LOG.warn("For oriented graph you should use nodeWithMaxGrade")
         }
 
         return graph.getVertices()
-                .maxWith(compareBy{graph.outNeighbours(it).size})
+                .map { it to graph.outNeighbours(it).size }
+                .maxWith(compareBy{it.second})
     }
 
     fun <V> calculateInGradeDistribution(graph: Graph<V>):Collection<Pair<Int,Double>>{
