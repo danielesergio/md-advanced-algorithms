@@ -4,15 +4,15 @@ plugins {
 
 apply from: "${project.rootDir.path}/gradle/base.gradle"
 
-group 'com.danielesergio.md.advance-algorithms'
+group 'com.danielesergio.md.advanced-algorithms'
 version app_version
-
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation project(":graphs")
     implementation app_dep.kotlin_std
     implementation app_dep.slf4j_api
     implementation app_dep.slf4j_simple
@@ -26,10 +26,4 @@ compileKotlin {
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
-}
-
-task runExample(type: JavaExec) {
-    group = 'Exercise'
-    main ='com.danielesergio.md.advancedalgorithms.graphs.Test'
-    classpath = sourceSets.main.runtimeClasspath
 }

@@ -1,2 +1,4 @@
 rootProject.name = 'advanced-algorithms'
-include 'graphs'
+include ':graphs'
+include ':resiliency-of-communication-graph'
+

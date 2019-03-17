@@ -1,5 +1,6 @@
-package com.danielesergio.md.advancedalgorithms.graph.model
+package com.danielesergio.md.advancedalgorithms.graph
 
+import com.danielesergio.md.advancedalgorithms.graph.model.*
 import java.io.File
 
 /**
@@ -10,11 +11,11 @@ typealias NodeNumbersAddersNumNodes = (MutableCollection<Int>, Int, Int) -> Unit
 
 object GraphBuilder {
 
-    fun loadFromResource(): Graph<Int>{
+    fun loadFromResource(resourceFile:File): Graph<Int> {
 
         val vertices = mutableSetOf<Int>()
         val edges = mutableListOf<Edge<Int>>()
-        File(this::class.java.classLoader.getResource("as20000102.txt").file)
+        resourceFile
                 .bufferedReader()
                 .lines()
                 .forEach{
@@ -26,12 +27,12 @@ object GraphBuilder {
                         vertices.add(edge.second)
                     }
                 }
-        val g = newInstance(GraphType(),vertices)
+        val g = newInstance(GraphType(), vertices)
         edges.forEach{g.addEdge(it.first,it.second)}
         return g
     }
 
-    fun er(graphType: GraphType, vertexSize: Int, p: Double): Graph<Int>{
+    fun er(graphType: GraphType, vertexSize: Int, p: Double): Graph<Int> {
         val vertices = (0 until vertexSize).toMutableSet()
         val graph = GraphImpl(graphType, VertexHandlerImpl(vertices), newEdgeHandler(vertices))
         val onEdgeFound: (Int, Int) -> Unit = { v1,v2 ->
@@ -64,7 +65,7 @@ object GraphBuilder {
 
      */
 
-    fun dpa(n: Int, m:Int) : Graph<Int>{
+    fun dpa(n: Int, m:Int) : Graph<Int> {
 
         val graphType = GraphType(selfLoopAllowed = false, oriented = true)
         val nodeNumbersAddersNumNodes: NodeNumbersAddersNumNodes = { nodeNumbers, numNodes, _ ->  nodeNumbers.add(numNodes)}
@@ -72,7 +73,7 @@ object GraphBuilder {
         return xda(graphType, n, m, nodeNumbersAddersNumNodes)
     }
 
-    fun upa(n: Int, m:Int) : Graph<Int>{
+    fun upa(n: Int, m:Int) : Graph<Int> {
 
         val graphType = GraphType(selfLoopAllowed = false, oriented = false)
         val nodeNumbersAddersNumNodes: NodeNumbersAddersNumNodes = { nodeNumbers, numNodes, sizeOfV1->  nodeNumbers.addAll(IntArray(sizeOfV1 + 1 ){numNodes}.toList())}
@@ -80,7 +81,7 @@ object GraphBuilder {
         return xda(graphType, n, m, nodeNumbersAddersNumNodes)
     }
 
-    private fun xda(graphType: GraphType, n: Int, m:Int, addersNumNodes:NodeNumbersAddersNumNodes):Graph<Int>{
+    private fun xda(graphType: GraphType, n: Int, m:Int, addersNumNodes: NodeNumbersAddersNumNodes): Graph<Int> {
         if(m > n){
             throw IllegalArgumentException("m must be in [1,$n]")
         }
@@ -108,7 +109,7 @@ object GraphBuilder {
             return v1
         }
 
-        fun completedGraph(vertexSize: Int):Graph<Int>{
+        fun completedGraph(vertexSize: Int): Graph<Int> {
             val vertices = (0 until vertexSize).toMutableSet()
             val graph = GraphImpl(graphType, VertexHandlerImpl(vertices), newEdgeHandler(vertices))
 
@@ -130,11 +131,11 @@ object GraphBuilder {
     }
 
 
-    fun <V: Comparable<V>>newInstance(graphType: GraphType, vertices:MutableSet<V>): Graph<V>{
+    fun <V: Comparable<V>>newInstance(graphType: GraphType, vertices:MutableSet<V>): Graph<V> {
         return GraphImpl(graphType, VertexHandlerImpl(vertices), newEdgeHandler(vertices))
     }
 
-    private fun loopAllPossibleEdge(graphType: GraphType, vertex:Iterable<Int>, onEdge: (Int,Int) -> Unit ){
+    private fun loopAllPossibleEdge(graphType: GraphType, vertex:Iterable<Int>, onEdge: (Int, Int) -> Unit ){
         vertex.forEach{ v1 ->
             vertex.forEach{v2 ->
                 val isValidEdge = graphType.selfLoopAllowed || v1 != v2

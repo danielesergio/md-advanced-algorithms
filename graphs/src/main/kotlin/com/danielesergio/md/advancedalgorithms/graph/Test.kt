@@ -4,7 +4,6 @@ package com.danielesergio.md.advancedalgorithms.graph
 
 import com.danielesergio.md.advancedalgorithms.graph.algorithm.ConnectedComponent
 import com.danielesergio.md.advancedalgorithms.graph.model.Edge
-import com.danielesergio.md.advancedalgorithms.graph.model.GraphBuilder
 import com.danielesergio.md.advancedalgorithms.graph.model.GraphType
 import com.danielesergio.md.advancedalgorithms.graph.algorithm.ConnectedComponentCalculator
 import com.danielesergio.md.advancedalgorithms.graph.algorithm.NodeGrade
