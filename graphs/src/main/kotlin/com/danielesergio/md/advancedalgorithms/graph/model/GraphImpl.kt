@@ -45,11 +45,11 @@ data class GraphImpl<V:Comparable<V>>(override val type: GraphType, private val 
     override fun addEdge(v1:V, v2:V, data:EdgeMetadata) {
         when{
 
-            hasEdge(v1, v2) -> LOG.info("($v1,$v2) already present in graph (parallel edge not yet supported)")
+            hasEdge(v1, v2) -> LOG.debug("($v1,$v2) already present in graph (parallel edge not yet supported)")
 
             v1!=v2 || type.selfLoopAllowed -> _addEdge(v1,v2,data)
 
-            else ->  LOG.info("($v1,$v2) not added because self loop is not allowed")
+            else ->  LOG.debug("($v1,$v2) not added because self loop is not allowed")
 
         }
     }
