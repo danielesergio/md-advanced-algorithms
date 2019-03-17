@@ -114,7 +114,7 @@ private fun resilentOfGrapOriginalVersion(graph: Graph<Int>) {
 
 private fun generateGraphWithDPA(vertexSize:Int, m:Int) {
     var current = LocalDateTime.now()
-    val graph2 = GraphBuilder.dpa(GraphType(selfLoopAllowed = false, oriented = true), vertexSize, m)
+    val graph2 = GraphBuilder.dpa(vertexSize, m)
     LOG.info("time to generate the graph: ${ChronoUnit.MILLIS.between(current, LocalDateTime.now())}")
     LOG.info("${graph2.getVertices().size}")
     LOG.info("time to obtains the vetices: ${ChronoUnit.MILLIS.between(current, LocalDateTime.now())}")

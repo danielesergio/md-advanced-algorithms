@@ -5,6 +5,9 @@ import java.io.File
 /**
  * @author Daniele Sergio
  */
+
+typealias NodeNumbersAddersNumNodes = (MutableCollection<Int>, Int, Int) -> Unit
+
 object GraphBuilder {
 
     fun loadFromResource(): Graph<Int>{
@@ -61,56 +64,69 @@ object GraphBuilder {
 
      */
 
-    fun dpa(graphType: GraphType, vertexSize: Int, m:Int) : Graph<Int>{
+    fun dpa(n: Int, m:Int) : Graph<Int>{
 
-        if(m > vertexSize){
-            throw IllegalArgumentException("m must be in [1,$vertexSize]")
+        val graphType = GraphType(selfLoopAllowed = false, oriented = true)
+        val nodeNumbersAddersNumNodes: NodeNumbersAddersNumNodes = { nodeNumbers, numNodes, _ ->  nodeNumbers.add(numNodes)}
+
+        return xda(graphType, n, m, nodeNumbersAddersNumNodes)
+    }
+
+    fun upa(n: Int, m:Int) : Graph<Int>{
+
+        val graphType = GraphType(selfLoopAllowed = false, oriented = false)
+        val nodeNumbersAddersNumNodes: NodeNumbersAddersNumNodes = { nodeNumbers, numNodes, sizeOfV1->  nodeNumbers.addAll(IntArray(sizeOfV1 + 1 ){numNodes}.toList())}
+
+        return xda(graphType, n, m, nodeNumbersAddersNumNodes)
+    }
+
+    private fun xda(graphType: GraphType, n: Int, m:Int, addersNumNodes:NodeNumbersAddersNumNodes):Graph<Int>{
+        if(m > n){
+            throw IllegalArgumentException("m must be in [1,$n]")
         }
 
-        val vertices = (0 until vertexSize).toMutableSet()
-        val graph = GraphImpl<Int>(graphType, VertexHandlerImpl(vertices), newEdgeHandler(vertices))
+        var numNodes = 0
+        val nodeNumbers: MutableList<Int> = mutableListOf()
 
-        val onEdgeFound: (Int,Int) -> Unit = { v1,v2 -> graph.addEdge(v1,v2) }
-        val initialVertex = (0 until m).toMutableList() //start with a completed graph of m nodes
-        loopAllPossibleEdge(graphType, initialVertex, onEdgeFound)
+        fun dpaTrial(m:Int){
+            numNodes = m
+            (0 until m).forEach{ i->
+                nodeNumbers.addAll(IntArray(m){i}.toList())
+            }
+        }
 
-        val data = dpaTrial(m)
-        (m until vertexSize).forEach{u->
-            val v1 = runTrial(data, graphType)
+        fun runTrial(m:Int):Set<Int>{
+            val v1 = mutableSetOf<Int>()
+            (1 .. m ).forEach{ _ ->
+                val u = nodeNumbers.random()
+                v1.add(u)
+            }
+
+            addersNumNodes.invoke(nodeNumbers, numNodes, v1.size)
+            nodeNumbers.addAll(v1)
+            numNodes++
+            return v1
+        }
+
+        fun completedGraph(vertexSize: Int):Graph<Int>{
+            val vertices = (0 until vertexSize).toMutableSet()
+            val graph = GraphImpl(graphType, VertexHandlerImpl(vertices), newEdgeHandler(vertices))
+
+            val onEdgeFound: (Int,Int) -> Unit = { v1,v2 -> graph.addEdge(v1,v2) }
+            val initialVertices = (0 until m).toMutableList() //start with a completed graph of m nodes
+            loopAllPossibleEdge(graphType, initialVertices, onEdgeFound)
+            return graph
+        }
+
+        val graph = completedGraph(n)
+        dpaTrial(m)
+        (m until n).forEach{ u->
+            val v1 = runTrial(m)
             graph.addVertex(u)
             v1.forEach{ v-> graph.addEdge(u,v) }
         }
 
         return graph
-    }
-
-    private fun dpaTrial(m:Int): DpaModel{
-        return DpaModel(m)
-    }
-
-    private fun runTrial(data: DpaModel, graphType: GraphType):Set<Int>{
-        val v1 = mutableSetOf<Int>()
-        (1 .. data.m ).forEach{ _ ->
-            val u = data.nodeNumbers.random()
-            v1.add(u)
-        }
-        if(graphType.oriented){
-            data.nodeNumbers.add(data.numNodes)
-        } else {
-            data.nodeNumbers.addAll(IntArray(v1.size + 1 ){data.numNodes}.toList())
-        }
-        data.nodeNumbers.addAll(v1)
-        data.numNodes++
-        return v1
-    }
-
-    private data class DpaModel(val m:Int, var numNodes:Int = 0){
-        val nodeNumbers: MutableList<Int> = mutableListOf()
-        init{
-            (0 until m).forEach{ i->
-                nodeNumbers.addAll(IntArray(m){i}.toList())
-            }
-        }
     }
 
 
@@ -122,10 +138,11 @@ object GraphBuilder {
         vertex.forEach{ v1 ->
             vertex.forEach{v2 ->
                 val isValidEdge = graphType.selfLoopAllowed || v1 != v2
-                if(isValidEdge){
-                    onEdge(v1,v2)
+                if(!isValidEdge){
+                    return
                 }
-                if(isValidEdge && graphType.oriented){
+                onEdge(v1,v2)
+                if(graphType.oriented){
                     onEdge(v2,v1)
                 }
             }
