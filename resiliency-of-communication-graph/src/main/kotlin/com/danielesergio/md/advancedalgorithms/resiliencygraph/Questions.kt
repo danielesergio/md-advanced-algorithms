@@ -58,7 +58,7 @@ object Questions {
 
         val finalData ="""
         set terminal png size 1024,768
-        set output 'homework1_question1.png'
+        set output 'homework1_$title.png'
 
         set ylabel "Largest connected component size"
         set xlabel "Number of node removed"
