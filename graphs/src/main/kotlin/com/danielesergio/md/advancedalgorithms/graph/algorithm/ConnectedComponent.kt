@@ -2,6 +2,7 @@ package com.danielesergio.md.advancedalgorithms.graph.algorithm
 
 import com.danielesergio.md.advancedalgorithms.graph.model.Graph
 import java.lang.IllegalArgumentException
+import java.util.*
 
 /**
  * @author Daniele Sergio
@@ -31,6 +32,53 @@ object ConnectedComponentCalculator {
             return visited
         }
 
+        //iterative black if all sub-tree is visited
+        fun dfsVisitedIt(u: V, visited:MutableSet<V>):ConnectedComponent<V>{
+            val stack = Stack<V>()
+            stack.add(u)
+            vertexColors[u] = Color.GREY
+            visited.add(u)
+            while(stack.isNotEmpty()){
+                val ele = stack.peek()
+                var allNeighboursAlreadyVisited = true
+                graph.outNeighbours(ele).forEach{ v ->
+                    if(vertexColors[v.key] == Color.WHITE){
+                        stack.push(v.key)
+                        visited.add(v.key)
+                        vertexColors[v.key] = Color.GREY
+                        allNeighboursAlreadyVisited = false
+                    }
+                }
+                if(allNeighboursAlreadyVisited) {
+                    vertexColors[ele] = Color.BLACK
+                    stack.pop()
+                }
+            }
+
+            return visited
+        }
+
+        //iterative black if all neighbours are already visited
+        fun dfsVisitedIt2(u: V, visited:MutableSet<V>):ConnectedComponent<V>{
+            val stack = Stack<V>()
+            stack.add(u)
+            vertexColors[u] = Color.GREY
+            visited.add(u)
+            while(stack.isNotEmpty()){
+                val ele = stack.pop()
+                graph.outNeighbours(ele).forEach{ v ->
+                    if(vertexColors[v.key] == Color.WHITE){
+                        stack.push(v.key)
+                        visited.add(v.key)
+                        vertexColors[v.key] = Color.GREY
+                    }
+                }
+                vertexColors[ele] = Color.BLACK
+            }
+
+            return visited
+        }
+
         fun run():MutableSet<ConnectedComponent<V>>{
             if(graph.type.oriented){
                 throw IllegalArgumentException("")
@@ -39,7 +87,7 @@ object ConnectedComponentCalculator {
             val connectedComponents = mutableSetOf<ConnectedComponent<V>>()
             graph.getVertices().forEach{v->
                 if(vertexColors[v] == Color.WHITE){
-                    connectedComponents.add(dfsVisited(v, mutableSetOf()))
+                    connectedComponents.add(dfsVisitedIt2(v, mutableSetOf()))
                 }
             }
 
@@ -79,6 +127,61 @@ object ConnectedComponentCalculator {
             return visited
         }
 
+        //iterative black if all sub-tree is visited
+        fun dfsVisitedIt(u: V, visited: MutableSet<V>):ConnectedComponent<V>{
+            val stack = Stack<V>()
+
+            val onWhiteNodeFound = { node:V ->
+                vertexColors[node] = Color.GREY
+                visited.add(node)
+                stack.push(node)
+                vertexMappedToCC[node] = visited
+            }
+
+            onWhiteNodeFound(u)
+
+            while(stack.isNotEmpty()) {
+                val ele = stack.peek()
+                var allNeighboursAlreadyVisited = true
+                graph.outNeighbours(ele).forEach { v ->
+                    if (vertexColors[v.key] == Color.WHITE) {
+                        onWhiteNodeFound(v.key)
+                        allNeighboursAlreadyVisited = false
+                    }
+                }
+                if(allNeighboursAlreadyVisited) {
+                    vertexColors[ele] = Color.BLACK
+                    stack.pop()
+                }
+            }
+            return visited
+        }
+
+        //iterative black if all neighbours are already visited
+        fun dfsVisitedIt2(u: V, visited: MutableSet<V>):ConnectedComponent<V>{
+            val stack = Stack<V>()
+
+            val onWhiteFound = { node:V ->
+                vertexColors[node] = Color.GREY
+                visited.add(node)
+                stack.push(node)
+                vertexMappedToCC[node] = visited
+            }
+
+            onWhiteFound(u)
+
+            while(stack.isNotEmpty()) {
+                val ele = stack.pop()
+                graph.outNeighbours(ele).forEach { v ->
+                    if (vertexColors[v.key] == Color.WHITE) {
+                        onWhiteFound(v.key)
+                    }
+                }
+                vertexColors[ele] = Color.BLACK
+            }
+            return visited
+        }
+
         fun run():MutableSet<ConnectedComponent<V>>{
             if(graph.type.oriented){
                 throw IllegalArgumentException("")
@@ -87,7 +190,7 @@ object ConnectedComponentCalculator {
             val connectedComponents = mutableSetOf<ConnectedComponent<V>>()
             vertices.forEach{v->
                 if(vertexColors[v] == Color.WHITE){
-                    connectedComponents.add(dfsVisited(v, mutableSetOf()))
+                    connectedComponents.add(dfsVisitedIt2(v, mutableSetOf()))
                 }
             }
 

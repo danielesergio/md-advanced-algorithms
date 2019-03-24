@@ -27,6 +27,14 @@ object GraphInitialization {
     val p: Double
     val m: Int
 
+    /*
+    [main] INFO Resiliency - check time with random attack
+[main] INFO Resiliency - Time for original version: PT29.341S
+[main] INFO Resiliency - Time for edited version: PT36.389S
+[main] INFO Resiliency - check time with removed node with max grade
+[main] INFO Resiliency - Time for original version: PT29.459S
+[main] INFO Resiliency - Time for edited version: PT16.109S
+     */
     init {
         var startInstant = Instant.now()
 
