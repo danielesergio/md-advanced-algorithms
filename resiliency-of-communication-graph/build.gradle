@@ -27,3 +27,10 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+
+task homework1(type: JavaExec) {
+    group = 'Exercise'
+    main ='com.danielesergio.md.advancedalgorithms.graphs.Test'
+    classpath = sourceSets.main.runtimeClasspath
+}

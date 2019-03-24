@@ -29,18 +29,6 @@ object Questions {
             vertexToRemoveSelector: VertexToRemoveSelector){
 
         directory.mkdirs()
-        /**
-         * Formule utilizzate per stimare m e p:
-         * * nell'algoritmo er, p e' la probabilita' che un nodo venga aggiunto. Quindi dati n vertici, se si vogliono ottenere
-         *   e archi allora la propabilita che un arco sia presente nel grafo e` pari al numero massimo di archi diviso
-         *   il numero di archi voluto. Nel nostro caso, poiche' il grafo non ammette archi che partono e arrivano sullo
-         *   stesso nodo il numero massimo di archi che il grafo puo' avere e' pari a n(n-1). p sara` quindi e/n(n-1)
-         *
-         * * come scritto nella cosegna il valore da utilizzare per m nell'algoritmo UDA e` pari al grado medio dei nodi del
-         *   grafo diviso due. Il grado medio di un vertice in un grafo(V,E) non orientato e' uguale a 2|E|/|V| quindi
-         *   m = |E|/|V|
-         *
-         */
 
         val real = GraphInitialization.real
         val er = GraphInitialization.er
