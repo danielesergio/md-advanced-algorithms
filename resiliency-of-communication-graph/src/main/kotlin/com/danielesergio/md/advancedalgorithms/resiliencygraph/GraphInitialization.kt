@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.time.Duration
 import java.time.Instant
-import java.time.Period
 
 /**
  * @author Daniele Sergio
@@ -18,7 +17,7 @@ object GraphInitialization {
     val er: GraphImpl<Int>
         get() = field.clone()
 
-    val uda: GraphImpl<Int>
+    val upa: GraphImpl<Int>
         get() = field.clone()
 
     val real: GraphImpl<Int>
@@ -27,14 +26,6 @@ object GraphInitialization {
     val p: Double
     val m: Int
 
-    /*
-    [main] INFO Resiliency - check time with random attack
-[main] INFO Resiliency - Time for original version: PT29.341S
-[main] INFO Resiliency - Time for edited version: PT36.389S
-[main] INFO Resiliency - check time with removed node with max grade
-[main] INFO Resiliency - Time for original version: PT29.459S
-[main] INFO Resiliency - Time for edited version: PT16.109S
-     */
     init {
         var startInstant = Instant.now()
 
@@ -53,13 +44,13 @@ object GraphInitialization {
 //        val m =  Math.round(real.getVertices().map{ real.outNeighbours(it).size}.sum().toDouble() / (2* vertexSize)).toInt()
         m =  Math.round(real.getEdges().size.toDouble() / real.getVertices().size ).toInt()
         LOG.info("Estimate m to obtain a graph with a similar number of edges using UPA algorithm: $m")
-        uda = GraphBuilder.upa(vertexSize, m) as GraphImpl<Int>
+        upa = GraphBuilder.upa(vertexSize, m) as GraphImpl<Int>
         LOG.debug("time to build upa: ${Duration.between(startInstant, Instant.now())}")
 
         LOG.info("Graph | vertices | edges")
         LOG.info("real  | ${real.getVertices().size} | ${real.getEdges().size}")
         LOG.info("er    | ${er.getVertices().size} | ${er.getEdges().size}")
-        LOG.info("upa   | ${uda.getVertices().size} | ${uda.getEdges().size}")
+        LOG.info("upa   | ${upa.getVertices().size} | ${upa.getEdges().size}")
     }
 
 }

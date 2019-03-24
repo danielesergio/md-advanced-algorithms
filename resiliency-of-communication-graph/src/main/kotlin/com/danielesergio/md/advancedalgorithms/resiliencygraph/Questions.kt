@@ -1,17 +1,9 @@
 package com.danielesergio.md.advancedalgorithms.resiliencygraph
 
-import com.danielesergio.md.advancedalgorithms.graph.algorithm.ConnectedComponent
 import com.danielesergio.md.advancedalgorithms.graph.algorithm.ConnectedComponentCalculator
 import com.danielesergio.md.advancedalgorithms.graph.algorithm.NodeGrade
 import com.danielesergio.md.advancedalgorithms.graph.model.Graph
-import com.sun.jmx.remote.internal.ArrayQueue
-import org.slf4j.LoggerFactory
 import java.io.File
-import java.time.Duration.between
-import java.time.Instant
-import java.time.Period
-import java.util.*
-import java.util.concurrent.BlockingQueue
 
 /**
  * @author Daniele Sergio
@@ -19,57 +11,22 @@ import java.util.concurrent.BlockingQueue
 
 object Questions {
 
-    fun question1(directory: File){
+    fun question12(directory: File){
         questionTemplate(directory = File(directory, "random_node"),
                 title = "Removing random node",
-                mainFunction = Questions::resilentOfGrapEditedVersion,
                 vertexToRemoveSelector = { graph -> graph.getVertices().random() })
     }
 
-    fun question2(directory: File){
+    fun question34(directory: File){
         questionTemplate(directory = File(directory, "node_with_max_grade"),
                 title = "Removing node with max grade",
-                mainFunction = Questions::resilentOfGrapEditedVersion,
                 vertexToRemoveSelector = {graph -> NodeGrade.nodeWithMaxGrade(graph)!!.first})
-    }
-
-    fun checkTime(directory: File){
-
-        var start = Instant.now()
-        questionTemplate(directory = File(directory, "check_time_random_original"),
-                title = "original",
-                mainFunction = Questions::resilentOfGrapOriginalVersion,
-                vertexToRemoveSelector = { graph -> graph.getVertices().random() })
-        LOG.info("check time with random attack")
-        LOG.info("Time for original version: ${between(start, Instant.now())}")
-        start = Instant.now()
-        questionTemplate(directory = File(directory, "check_time_random_edited"),
-                title = "edited",
-                mainFunction = Questions::resilentOfGrapEditedVersion,
-                vertexToRemoveSelector = { graph -> graph.getVertices().random() })
-        LOG.info("Time for edited version: ${between(start, Instant.now())}")
-
-        LOG.info("check time with removed node with max grade")
-        start = Instant.now()
-        questionTemplate(directory = File(directory, "check_time_max_grade_original"),
-                title = "original",
-                mainFunction = Questions::resilentOfGrapOriginalVersion,
-                vertexToRemoveSelector = {graph -> NodeGrade.nodeWithMaxGrade(graph)!!.first})
-
-        LOG.info("Time for original version: ${between(start, Instant.now())}")
-        start = Instant.now()
-        questionTemplate(directory = File(directory, "check_time_max_grade_edited"),
-                title = "edited",
-                mainFunction = Questions::resilentOfGrapEditedVersion,
-                vertexToRemoveSelector = {graph -> NodeGrade.nodeWithMaxGrade(graph)!!.first})
-        LOG.info("Time for edited version: ${between(start, Instant.now())}")
     }
 
     private fun questionTemplate(
             directory: File,
             title: String,
-            vertexToRemoveSelector: VertexToRemoveSelector,
-            mainFunction: (Graph<Int>, File, VertexToRemoveSelector, Double) -> Triple<Int,Int,Double>){
+            vertexToRemoveSelector: VertexToRemoveSelector){
 
         directory.mkdirs()
         /**
@@ -87,17 +44,17 @@ object Questions {
 
         val real = GraphInitialization.real
         val er = GraphInitialization.er
-        val uda = GraphInitialization.uda
+        val upa = GraphInitialization.upa
 
         val gnuPlotCommand = """
 
         plot "real.dat" using 1:2 with lines title 'Real Network: (${real.getVertices().size}, ${real.getEdges().size})', \
              "er.dat" using 1:2 with lines title 'ER(p = ${GraphInitialization.p}): (${er.getVertices().size}, ${er.getEdges().size})', \
-             "uda.dat" using 1:2 with lines title 'UDA(m= ${GraphInitialization.m}): (${uda.getVertices().size}, ${uda.getEdges().size})' \
+             "upa.dat" using 1:2 with lines title 'UPA(m= ${GraphInitialization.m}): (${upa.getVertices().size}, ${upa.getEdges().size})' \
         """.trimIndent()
 
-        val points = mutableListOf(real to File(directory, "real.dat"), er to File(directory, "er.dat"), uda to File(directory, "uda.dat"))
-                .map{mainFunction.invoke(it.first, it.second, vertexToRemoveSelector, 0.2)}
+        val points = mutableListOf(real to File(directory, "real.dat"), er to File(directory, "er.dat"), upa to File(directory, "upa.dat"))
+                .map{ graphResiliency(it.first, it.second, vertexToRemoveSelector, 0.2)}
                 .map{"""set label "(cc/vertices:  ${it.third}%)" at ${it.first}, ${it.second} point pointtype 7 pointsize 1"""}
 
 
@@ -121,17 +78,17 @@ object Questions {
     }
 
 
-    private fun resilentOfGrapOriginalVersion(graph: Graph<Int>,
-                                            file:File,
-                                            vertexToRemoveSelector: VertexToRemoveSelector,
-                                            checkLimit: Double = 0.2):Triple<Int,Int,Double>{
+    private fun graphResiliency(graph: Graph<Int>,
+                                file:File,
+                                vertexToRemoveSelector: VertexToRemoveSelector,
+                                checkLimit: Double = 0.2):Triple<Int,Int,Double>{
 
         var nodeRemoved = 0
         val numOfVertexForThreshold = Math.round(graph.getVertices().size * checkLimit).toInt()
         var point = Triple(0,0, 0.0)
-//
+
         while (graph.getVertices().size > 1) {
-            val cc = ConnectedComponentCalculator.originalVersion(graph).map { it.size }
+            val cc = ConnectedComponentCalculator.execute(graph).map { it.size }
             val vertexToRemove = vertexToRemoveSelector.invoke(graph)
             file.appendText("$nodeRemoved, ${cc.max()!! } \n")
 
@@ -144,56 +101,18 @@ object Questions {
             nodeRemoved++
 
         }
-        return point
-    }
 
-
-
-    private fun resilentOfGrapEditedVersion(graph: Graph<Int>, 
-                                            file:File,
-                                            vertexToRemoveSelector: VertexToRemoveSelector,
-                                            checkLimit: Double = 0.2):Triple<Int,Int,Double>{
-        var vertices = graph.getVertices().toMutableSet()
-        val vertexMappedToCC = mutableMapOf<Int,ConnectedComponent<Int>>()
-        val connectedComponentSizeList = mutableListOf<Int>()
-        var nodeRemoved = 0
-
-        val numOfVertexForThreshold = Math.round(vertices.size * checkLimit).toInt()
-        var point = Triple(0,0, 0.0)
-//
-        while (graph.getVertices().size > 1) {
-            val cc = ConnectedComponentCalculator.editedVersion(graph,vertexMappedToCC, vertices)
-            connectedComponentSizeList.addAll(cc.map { it.size })
-            val vertexToRemove = vertexToRemoveSelector.invoke(graph)
-            file.appendText("$nodeRemoved, ${connectedComponentSizeList.max()!! } \n")
-
-            if( nodeRemoved == numOfVertexForThreshold){
-                val maxCC = connectedComponentSizeList.max()!!
-                point= Triple(numOfVertexForThreshold, maxCC, maxCC.toDouble() / graph.getVertices().size)
-            }
-
-
-            graph.removeVertex(vertexToRemove)
-            vertices = vertexMappedToCC.getValue(vertexToRemove)
-            nodeRemoved++
-            connectedComponentSizeList.remove(vertices.size)
-            vertexMappedToCC.remove(vertexToRemove)
-            vertices.remove(vertexToRemove)
-
-        }
         return point
     }
 }
 
 typealias VertexToRemoveSelector = (Graph<Int>) -> Int
 
-val LOG = LoggerFactory.getLogger("Resiliency")!!
-
 fun main() {
     System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "INFO")
 
     val dir = File("./data")
-    Questions.question1(dir)
-    Questions.question2(dir)
+    Questions.question12(dir)
+    Questions.question34(dir)
 
 }

@@ -70,7 +70,7 @@ object GraphBuilder {
         val graphType = GraphType(selfLoopAllowed = false, oriented = true)
         val nodeNumbersAddersNumNodes: NodeNumbersAddersNumNodes = { nodeNumbers, numNodes, _ ->  nodeNumbers.add(numNodes)}
 
-        return xda(graphType, n, m, nodeNumbersAddersNumNodes)
+        return xpa(graphType, n, m, nodeNumbersAddersNumNodes)
     }
 
     fun upa(n: Int, m:Int) : Graph<Int> {
@@ -78,10 +78,10 @@ object GraphBuilder {
         val graphType = GraphType(selfLoopAllowed = false, oriented = false)
         val nodeNumbersAddersNumNodes: NodeNumbersAddersNumNodes = { nodeNumbers, numNodes, sizeOfV1->  nodeNumbers.addAll(IntArray(sizeOfV1 + 1 ){numNodes}.toList())}
 
-        return xda(graphType, n, m, nodeNumbersAddersNumNodes)
+        return xpa(graphType, n, m, nodeNumbersAddersNumNodes)
     }
 
-    private fun xda(graphType: GraphType, n: Int, m:Int, addersNumNodes: NodeNumbersAddersNumNodes): Graph<Int> {
+    private fun xpa(graphType: GraphType, n: Int, m:Int, addersNumNodes: NodeNumbersAddersNumNodes): Graph<Int> {
         if(m > n){
             throw IllegalArgumentException("m must be in [1,$n]")
         }
