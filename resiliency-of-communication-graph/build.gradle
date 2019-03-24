@@ -28,9 +28,8 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
-
-task homework1(type: JavaExec) {
+task Homework1(type: JavaExec) {
     group = 'Exercise'
-    main ='com.danielesergio.md.advancedalgorithms.graphs.Test'
+    main = 'com.danielesergio.md.advancedalgorithms.resiliencygraph.Main'
     classpath = sourceSets.main.runtimeClasspath
 }
