@@ -7,7 +7,6 @@ import org.testng.annotations.Test
 /**
  * @author Daniele Sergio
  */
-
 class TestVertices{
 
     @DataProvider(name = "Serialization")
@@ -16,7 +15,7 @@ class TestVertices{
 
     }
 
-    @Test(enabled = false, dataProvider = "Serialization")
+    @Test(enabled = true, dataProvider = "Serialization")
     fun test(objectToTest: Any) {
         assertEquals(1,1)
     }

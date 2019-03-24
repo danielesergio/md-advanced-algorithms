@@ -1,0 +1,27 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+apply from: "${project.rootDir.path}/gradle/base.gradle"
+
+group 'com.danielesergio.md.advanced-algorithms'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(":graphs")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation app_dep.kotlin_std
+    implementation app_dep.slf4j_api
+    implementation app_dep.slf4j_simple
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}

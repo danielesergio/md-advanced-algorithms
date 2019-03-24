@@ -8,9 +8,15 @@ data class GraphType(val selfLoopAllowed:Boolean = false, val oriented:Boolean =
 
 data class Edge<V>(val first:V, val second:V, val data: EdgeMetadata = EdgeMetadata.Empty)
 
+
+
 sealed class EdgeMetadata{
     data class SimpleEdge<T>(val data:T):EdgeMetadata()
-    data class WeightEdge<T>(val weight: Int,val data:T):EdgeMetadata()
+    data class EdgeWithWeight<I,T:Comparable<T>>(val weight: Weight<I,T>):EdgeMetadata(){
+        interface Weight<in I,  C:Comparable<C>>{
+            fun asComparable(input: I): C
+        }
+    }
     object Empty:EdgeMetadata()
     object NoEdge:EdgeMetadata()
 }
