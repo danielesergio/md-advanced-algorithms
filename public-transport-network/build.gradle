@@ -25,3 +25,9 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+task Homework2(type: JavaExec) {
+    group = 'Exercise'
+    main = 'com.danielesergio.md.advancedalgorithms.transportnetwork.Main'
+    classpath = sourceSets.main.runtimeClasspath
+}
