@@ -1,18 +1,25 @@
 package com.danielesergio.md.advancedalgorithms.transportnetwork
 
-import com.danielesergio.md.advancedalgorithms.graph.algorithm.ConnectedComponentCalculator
 import com.danielesergio.md.advancedalgorithms.graph.model.Graph
 import com.danielesergio.md.advancedalgorithms.transportnetwork.algorithm.Race
 import com.danielesergio.md.advancedalgorithms.transportnetwork.algorithm.SSSP
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.util.*
+import java.time.Duration;
 
 object Questions {
 
     val LOG = LoggerFactory.getLogger(Questions::class.java)
     data class Trip(val from:String, val to:String, val time:String)
 
+    fun Duration.toTimeString():String{
+        val days = toDays()
+        val hours = toHours() - (days * 24)
+        val minute = toMinutes() - (days * 24 * 60) - (hours * 60)
+        val dayString = if(days == 0L) {""} else {"($days giorni dopo)"}
+        return "${hours.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} $dayString"
+    }
     private fun writeStationFile(graph: Graph<Station>,
                                  directory: File){
         directory.mkdirs()
@@ -103,15 +110,15 @@ object Questions {
 
             val arriveTime = list.maxBy { it.third.arrive }?.third?.arrive
             LOG.info("Viaggio da ${start.code} a ${end.code}")
-            LOG.info("Orario di partenza ${trip.time.toDuration()}")
-            LOG.info("Orario di arrivo $arriveTime")
+            LOG.info("Orario di partenza ${trip.time.toDuration().toTimeString()}")
+            LOG.info("Orario di arrivo ${arriveTime?.toTimeString()}")
             val sortedList = list.sortedBy { it.third.leave }
             sortedList
                     .groupBy { it.third.raceName }
                     .map{
                         it.value.reduce { acc, current -> Triple(acc.first, current.second, Race(acc.third.leave, current.third.arrive, acc.third.raceName)) }
                     }.forEach{
-                        LOG.info("${it.third.leave}: corsa ${it.third.raceName} da ${it.first.code} a ${it.second.code}")
+                        LOG.info("${it.third.leave.toTimeString()}: corsa ${it.third.raceName} da ${it.first.code} a ${it.second.code}")
                     }
 
             val mapEntry = writeTrip(directory,trip, sortedList)
