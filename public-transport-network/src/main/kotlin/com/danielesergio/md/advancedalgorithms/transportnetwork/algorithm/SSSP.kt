@@ -25,14 +25,20 @@ data class TransportNetworkEdge(val races:List<Race>):EdgeMetadata.EdgeWithWeigh
 
         var value: Duration? = null
         var nexDay = 0L
+
         while (value == null) {
-            value = races.map { race -> race.nextDays(nexDay) }
-                    .filter { race -> race.leave >= input }
-                    .minBy { race -> race.arrive }
-                    ?.arrive
+            value = minArriveTime(nexDay, input)
             nexDay++
         }
-        return value
+
+        //next day could exist a race that arrive before best race of current day
+        val nexDayValue = minArriveTime(nexDay, input)!!
+
+        return if(nexDayValue < value){
+            nexDayValue
+        } else {
+            value
+        }
 
     }
 
@@ -44,12 +50,28 @@ data class TransportNetworkEdge(val races:List<Race>):EdgeMetadata.EdgeWithWeigh
         var value: Race? = null
         var nexDay = 0L
         while (value == null) {
-            value = races.map { race -> race.nextDays(nexDay) }
-                    .filter { race -> race.leave >= input }
-                    .minBy { race -> race.arrive }
+            value = bestRace(nexDay, input)
             nexDay++
         }
-        return value
+
+        //next day could exist a race that arrive before best race of current day
+        val nexDayBestRace = bestRace(nexDay, input)!!
+        return if(nexDayBestRace.arrive < value.arrive){
+            nexDayBestRace
+        } else {
+            value
+        }
+    }
+
+    private fun minArriveTime(nexDay: Long, input: Duration): Duration? {
+        return bestRace(nexDay, input)
+                ?.arrive
+    }
+
+    private fun bestRace(nexDay: Long, input: Duration): Race? {
+        return races.map { race -> race.nextDays(nexDay) }
+                .filter { race -> race.leave >= input }
+                .minBy { race -> race.arrive }
     }
 }
 
