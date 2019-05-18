@@ -2,6 +2,7 @@ package com.danielesergio.md.advancedalgorithms.transportnetwork.algorithm
 
 import com.danielesergio.md.advancedalgorithms.graph.model.EdgeMetadata
 import com.danielesergio.md.advancedalgorithms.graph.model.Graph
+import com.danielesergio.md.advancedalgorithms.graph.utils.BinaryHeapQueue
 import java.time.Duration
 import java.util.*
 

@@ -13,6 +13,7 @@ fun main() {
 
     fun solutionChecker(n:Int, Ax:Double, OPT:Double): Boolean {
         val limit = Math.log(n.toDouble())
+        println("${OPT / Ax}, ${Ax / OPT}, $limit")
         return OPT / Ax <= limit && Ax / OPT <= limit
     }
 

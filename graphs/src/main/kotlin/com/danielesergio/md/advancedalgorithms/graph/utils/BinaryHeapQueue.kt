@@ -1,4 +1,4 @@
-package com.danielesergio.md.advancedalgorithms.transportnetwork.algorithm
+package com.danielesergio.md.advancedalgorithms.graph.utils
 
 import java.util.*
 import kotlin.NoSuchElementException
@@ -17,7 +17,7 @@ class BinaryHeapQueue<T> constructor(private val valueMappedToIndex:MutableMap<T
 
         data class Entry<T>(val value:T, val weight:Long)
 
-        fun <T>newInstance(vararg entries:Entry<T>):BinaryHeapQueue<T>{
+        fun <T>newInstance(vararg entries: Entry<T>): BinaryHeapQueue<T> {
             val data = entries.toList().toMutableList()
             val valueMappedToIndex = (data.map { it.value } zip (0 until data.size)).toMap().toMutableMap()
 
@@ -74,7 +74,7 @@ class BinaryHeapQueue<T> constructor(private val valueMappedToIndex:MutableMap<T
     }
 
 
-    override fun add(element:Entry<T>):Boolean{
+    override fun add(element: Entry<T>):Boolean{
         return if(valueMappedToIndex.containsKey(element.value)){
             decreaseKey(element)
         } else {
