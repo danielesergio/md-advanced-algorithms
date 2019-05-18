@@ -20,14 +20,14 @@ object GraphInitialization {
     val RRR = 6378.388;
 
 
-    enum class TSPGraph(val fileName:String) {
-        BURMA14("burma14.tsp"),
-        ULYSSES22("ulysses22.tsp"),
-        EIL51("eil51.tsp"),
-        KROD100("kroD100.tsp"),
-        GR229("gr229.tsp"),
-        D493("d493.tsp"),
-        DSJ1000("dsj1000.tsp")
+    enum class TSPGraph(val fileName:String, val optimalSolution:Int) {
+        BURMA14("burma14.tsp", 3323),
+        ULYSSES22("ulysses22.tsp", 7013),
+        EIL51("eil51.tsp", 426),
+        KROD100("kroD100.tsp", 21294),
+        GR229("gr229.tsp", 134602),
+        D493("d493.tsp", 35002),
+        DSJ1000("dsj1000.tsp", 18659688)
     }
 
     enum class EdgeWeight {
