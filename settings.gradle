@@ -1,4 +1,6 @@
 rootProject.name = 'advanced-algorithms'
 include ':graphs'
 include ':resiliency-of-communication-graph'
+include ':public-transport-network'
+include 'travelling-salesman-problem'
 
