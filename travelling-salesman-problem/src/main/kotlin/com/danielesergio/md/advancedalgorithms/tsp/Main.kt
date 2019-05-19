@@ -2,8 +2,6 @@
 
 package com.danielesergio.md.advancedalgorithms.tsp
 
-import java.io.File
-
 /**
  * @author Daniele Sergio
  */
@@ -12,10 +10,10 @@ fun main() {
     System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "INFO")
 
     fun solutionChecker(n:Int, Ax:Double, OPT:Double): Boolean {
-        val limit = Math.log(n.toDouble())
+        val limit = 2//Math.log(n.toDouble())
         println("${OPT / Ax}, ${Ax / OPT}, $limit")
         return OPT / Ax <= limit && Ax / OPT <= limit
     }
 
-    GraphInitialization.graphs.forEach{ (k,v) -> println("$k: ${v.getEdges().size}, ${Algorithms.nearestNeighborTsp(v)}, ${solutionChecker(v.getVertices().size, Algorithms.nearestNeighborTsp(v).pathWeight.toDouble(), k.optimalSolution.toDouble())}")}
+    GraphInitialization.graphs.forEach{ (k,v) -> println("$k, ${k.optimalSolution}:\n${Algorithms.nearestNeighborTsp(v)}\n${Algorithms.mstApprox(v)}")}
 }
