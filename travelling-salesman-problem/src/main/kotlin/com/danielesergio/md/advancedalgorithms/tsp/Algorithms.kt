@@ -1,7 +1,6 @@
 package com.danielesergio.md.advancedalgorithms.tsp
 
 import com.danielesergio.md.advancedalgorithms.graph.GraphBuilder
-import com.danielesergio.md.advancedalgorithms.graph.algorithm.ConnectedComponentCalculator
 import com.danielesergio.md.advancedalgorithms.graph.model.Edge
 import com.danielesergio.md.advancedalgorithms.graph.model.EdgeMetadata
 import com.danielesergio.md.advancedalgorithms.graph.model.Graph
@@ -16,6 +15,12 @@ import java.util.*
 object Algorithms {
 
     val LOG = LoggerFactory.getLogger(Algorithms::class.java)
+
+    private fun <V>MutableSet<V>.removeFirst():V{
+        val first = first()
+        remove(first)
+        return first
+    }
 
     fun <V>Edge<V>.weight():Int{
         return (data as (EdgeMetadata.EdgeWithWeight<Unit, Int>))
@@ -72,13 +77,11 @@ object Algorithms {
             while(stack.isNotEmpty()){
                 val ele = stack.peek()
                 when{
-                    ele.second.size == 1 && ele.second.contains(ele.first) -> {
-                        d[stack.pop()] =  graph.getEdge(firstNode, ele.first).weight()
-                    }
+                    ele.second.size == 1 && ele.second.contains(ele.first) -> d[stack.pop()] =  graph.getEdge(firstNode, ele.first).weight()
 
                     else -> {
                         var mindist = Int.MAX_VALUE
-                        var SWithoutV  = ele.second.toMutableList() - ele.first //todo toMutalbeSet vs toMutableList
+                        var SWithoutV  = ele.second.toMutableList() - ele.first
                         if(map.containsKey(SWithoutV)){
                             SWithoutV = map.getValue(SWithoutV.toMutableList()) as List<V>
                         } else {
@@ -118,12 +121,6 @@ object Algorithms {
 
     fun <V>nearestNeighborTsp(graph: Graph<V>) : TspResult{
 
-        fun MutableSet<V>.removeFirst():V{
-            val first = first()
-            remove(first)
-            return first
-        }
-
         fun MutableSet<V>.removeMin(v:V):V{
             val min = minBy { graph.getEdge(v, it).weight() }!!
             remove(min)
@@ -136,9 +133,9 @@ object Algorithms {
         var lastAddedVertex = firstPathNode
         var pathWeight = 0
         while(verticesNotVisited.isNotEmpty()){
-            val newVertexToAdd = verticesNotVisited.removeMin(lastAddedVertex)
-            pathWeight += graph.getEdge(lastAddedVertex, newVertexToAdd).weight()
-            lastAddedVertex = newVertexToAdd
+            val vertexToAdd = verticesNotVisited.removeMin(lastAddedVertex)
+            pathWeight += graph.getEdge(lastAddedVertex, vertexToAdd).weight()
+            lastAddedVertex = vertexToAdd
         }
 
         return TspResult(
@@ -149,13 +146,13 @@ object Algorithms {
 
     fun <V:Comparable<V>> mstApprox(graph:Graph<V>):TspResult{
         fun mstPrim(graph: Graph<V>):Map<V,V> {
-            val vertices = graph.getVertices()
-            val firstVertex = vertices.first()
-            val keys = mutableMapOf(graph.getVertices().first() to 0)
+            val vertices = graph.getVertices().toMutableSet()
+            val firstVertex = vertices.removeFirst()
+            val keys = mutableMapOf(firstVertex to 0)
             val parents = mutableMapOf<V,V>()
             val queue = BinaryHeapQueue.newInstance(
                     BinaryHeapQueue.Companion.Entry(firstVertex, 0),
-                    *graph.getVertices()
+                    *vertices
                             .map { BinaryHeapQueue.Companion.Entry(it, Long.MAX_VALUE) }
                             .toTypedArray())
             while(queue.isNotEmpty()){
@@ -171,7 +168,6 @@ object Algorithms {
 
                 }
             }
-
             return parents
         }
 
@@ -187,14 +183,14 @@ object Algorithms {
                 throw IllegalArgumentException("")
             }
 
-            val vertexColors:MutableMap<V, Color> = graph.getVertices().map{ it to Color.WHITE }.toMap().toMutableMap()
+            val vertexColors:MutableMap<V, Color> = mutableMapOf()
             val queue = LinkedList<V>()
             //recursive version
             fun dfsVisited(u: V){
                 vertexColors[u] = Color.GREY
                 queue.add(u)
                 graph.outNeighbours(u).forEach{ v ->
-                    if(vertexColors[v.key] == Color.WHITE){
+                    if(vertexColors.getOrDefault(v.key, Color.WHITE) == Color.WHITE){
                         dfsVisited(v.key)
                     }
                 }
@@ -203,7 +199,7 @@ object Algorithms {
 
 
             graph.getVertices().forEach{v->
-                if(vertexColors[v] == Color.WHITE){
+                if(vertexColors.getOrDefault(v, Color.WHITE) == Color.WHITE){
                     dfsVisited(v)
                 }
             }
@@ -212,14 +208,14 @@ object Algorithms {
         }
 
         val mst = buildGraph(mstPrim(graph))
-        val verticesSortedByVisited = dfs(mst)
-        val firsNode = verticesSortedByVisited.element()
-        val pathSize = verticesSortedByVisited.size
+        val verticesSortedByVisitedTime = dfs(mst)
+        val firsNode = verticesSortedByVisitedTime.element()
+        val pathSize = verticesSortedByVisitedTime.size
         var pathWeight = 0
-        while(verticesSortedByVisited.isNotEmpty()){
-            val u = verticesSortedByVisited.remove()
-            val v = if(verticesSortedByVisited.isEmpty()) firsNode else verticesSortedByVisited.element()
-            pathWeight += graph.getEdge(u,v).weight() //mst not cointains last edge (FirstVisitedNode to LastVisitedNode)
+        while(verticesSortedByVisitedTime.isNotEmpty()){
+            val u = verticesSortedByVisitedTime.remove()
+            val v = if(verticesSortedByVisitedTime.isEmpty()) firsNode else verticesSortedByVisitedTime.element()
+            pathWeight += graph.getEdge(u,v).weight()
         }
         return TspResult(pathSize = pathSize, pathWeight = pathWeight)
     }
