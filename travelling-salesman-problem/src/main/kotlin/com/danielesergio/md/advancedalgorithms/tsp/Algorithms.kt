@@ -76,7 +76,7 @@ object Algorithms {
                                 val weight = graph.getEdge(u, v).weight()
                                 if( dist + weight < mindist){
                                     mindist = dist + weight
-                                    updatePartialResult(TspResult(SWithoutV.size, mindist, Duration.between(startInstant, Instant.now())))
+                                    updatePartialResult(TspResult(SWithoutV.size + 1, mindist, Duration.between(startInstant, Instant.now())))
                                 }
                             }
                     d[Pair(v,S)] = mindist
@@ -123,13 +123,13 @@ object Algorithms {
                                                             pathWeight =  mindist,
                                                             duration = Duration.between(startInstant, Instant.now())))
                                         }
-                                        yield()
                                     }
                             d[stack.pop()] = mindist
                         }
 
                     }
                 }
+                yield()
             }
 //            return TspResult(S.size, d.getValue(Pair(v,S)))
         }
