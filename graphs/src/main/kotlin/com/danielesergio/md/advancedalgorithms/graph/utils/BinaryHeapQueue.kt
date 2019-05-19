@@ -138,7 +138,7 @@ class BinaryHeapQueue<T> constructor(private val valueMappedToIndex:MutableMap<T
         }
     }
 
-    public fun decreaseKey(entryWithNewValue: Entry<T>):Boolean{
+    fun decreaseKey(entryWithNewValue: Entry<T>):Boolean{
         val newWeight = entryWithNewValue.weight
         val value = entryWithNewValue.value
         val valueIndex = valueMappedToIndex[value]!!
@@ -151,6 +151,10 @@ class BinaryHeapQueue<T> constructor(private val valueMappedToIndex:MutableMap<T
             bubbleUp(valueIndex)
             true
         }
+    }
+
+    fun containsKey(value:T):Boolean{
+            return valueMappedToIndex.containsKey(value)
     }
 
     override fun toString(): String {
