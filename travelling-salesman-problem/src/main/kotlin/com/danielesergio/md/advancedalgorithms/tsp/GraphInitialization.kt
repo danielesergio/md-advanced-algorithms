@@ -1,11 +1,7 @@
 package com.danielesergio.md.advancedalgorithms.tsp
 
-import com.danielesergio.md.advancedalgorithms.graph.GraphBuilder
 import com.danielesergio.md.advancedalgorithms.graph.model.*
 import org.slf4j.LoggerFactory
-import java.io.File
-import java.time.Duration
-import java.time.Instant
 import java.util.zip.ZipFile
 
 /**
