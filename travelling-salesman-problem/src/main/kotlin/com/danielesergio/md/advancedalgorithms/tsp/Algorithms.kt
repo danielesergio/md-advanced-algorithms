@@ -48,6 +48,8 @@ object Algorithms {
             }
         } catch (e:TimeoutCancellationException){
             LOG.info(e.localizedMessage)
+        } catch (e:VirtualMachineError){
+            LOG.info(e.localizedMessage)
         }
 
         currentResult.copy(duration =  Duration.between(startInstant, Instant.now()))
@@ -90,7 +92,6 @@ object Algorithms {
             val startInstant = Instant.now()
             val stack = Stack<Pair<V, Collection<V>>> ()
             stack.push(Pair(v, S))
-            val map:MutableMap<Collection<V>, Collection<V>> = mutableMapOf()
             while(stack.isNotEmpty()){
                 val ele = stack.peek()
                 when{
@@ -98,12 +99,7 @@ object Algorithms {
 
                     else -> {
                         var mindist = Int.MAX_VALUE
-                        var SWithoutV  = ele.second.toMutableList() - ele.first
-                        if(map.containsKey(SWithoutV)){
-                            SWithoutV = map.getValue(SWithoutV.toMutableList()) as List<V>
-                        } else {
-                            map[SWithoutV] = SWithoutV
-                        }
+                        val SWithoutV  = ele.second.toMutableList() - ele.first
                         run loop@{
                             SWithoutV
                                     .forEach { u ->
