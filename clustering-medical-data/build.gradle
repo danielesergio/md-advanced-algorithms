@@ -21,6 +21,12 @@ dependencies {
 
 }
 
+task Homework4(type: JavaExec) {
+    group = 'Exercise'
+    main = 'com.danielesergio.md.advancedalgorithms.resiliencygraph.Main'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
