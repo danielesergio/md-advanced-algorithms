@@ -3,4 +3,7 @@ include ':graphs'
 include ':resiliency-of-communication-graph'
 include ':public-transport-network'
 include ':travelling-salesman-problem'
+include ':clustering-medical-data'
+include ':clustering-k-means'
+
 
