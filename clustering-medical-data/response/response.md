@@ -20,6 +20,8 @@ Utilizzate un colore diverso per identificare ogni cluster. È possibile allegar
 # Domanda 3
 Quale metodo di clustering è più veloce quando il numero di cluster di output è un numero piccolo o una piccola frazione del numero di punti del dataset? Fornite una breve spiegazione in termini dei tempi di esecuzione asintotici di entrambi i metodi. Assumete che HierarchicalClustering usi FastClosestPair e che k-means usi sempre un piccolo numero di iterazioni.
 ### Risposta
+Il clustering gerarchico impiega sempre meno tempo ma mano che i cluster diminuiscono perche` deve fare meno confronti. Invece k-means fa sempre lo stesso numero di confronti quindi il tempo per ogni iterazione rimane costante.
+Per poche iterazioni è quindi più rapido l'algoritmo k-means.
 
 # Domanda 4
 Create un'immagine dei 9 cluster generati applicando l'algoritmo di Clustering Gerarchico al set di dati con 212 contee. 
@@ -187,4 +189,7 @@ Calcolare la distorsione dei clustering prodotti da Clustering Gerarchico e k-me
 |20  | 3.8342 * 10^11  | 
 
 # Domanda 10
-### Risposta
+Per ciascun set di dati (212, 562 e 1041 contee), c'è un metodo di clustering che produce sempre risultati con distorsione inferiore quando il numero di cluster di output è compreso tra 6 e 20? Se è così, indicare per quali insiemi di dati un metodo è superiore all'altro.
+# Risposta
+No generalmente l'algoritmo di clustering gerarchico si comporta meglio quando ci sono un minor numero di cluster (tra 6 e 13), mentre l'algoritmo K-Means si comporta meglio quando ci sono un maggior
+numero di cluster (tra 14 e 20)
