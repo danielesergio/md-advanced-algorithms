@@ -23,7 +23,7 @@ dependencies {
 
 task Homework4(type: JavaExec) {
     group = 'Exercise'
-    main = 'com.danielesergio.md.advancedalgorithms.resiliencygraph.Main'
+    main = 'com.danielesergio.md.advancedalgorithms.clustering.Main'
     classpath = sourceSets.main.runtimeClasspath
 }
 
