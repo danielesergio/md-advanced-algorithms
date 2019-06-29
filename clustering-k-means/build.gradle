@@ -17,7 +17,7 @@ dependencies {
     implementation app_dep.kotlin_std
     implementation app_dep.slf4j_api
     implementation app_dep.slf4j_simple
-
+    implementation app_dep.kotlin_coroutine_core
     testCompile test_dep.testng
 
 }

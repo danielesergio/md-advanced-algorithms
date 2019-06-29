@@ -11,6 +11,10 @@ data class Point(val x:Double, val y:Double){
     fun distance(point: Point):Double{
         return Math.sqrt(Math.pow(x-point.x, 2.0) + Math.pow(y - point.y, 2.0))
     }
+
+    fun sum(point:Point):Point{
+        return Point(x + point.x, y + point.y)
+    }
 }
 
 data class Cluster(val elements:MutableSet<Mappable> = mutableSetOf(), val center: Point = elements.centroid()){
