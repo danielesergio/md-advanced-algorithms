@@ -1,24 +1,26 @@
 package com.danielesergio.md.advancedalgorithms.clustering
 
 import com.danielesergio.md.advancedalgorithms.clustering.ClusterBuilder.getDataSet
+import com.danielesergio.md.advancedalgorithms.clustering.model.Cluster
+import com.danielesergio.md.advancedalgorithms.clustering.model.County
 import java.io.File
 
 object Question {
     const val GNUPLOT_FILE_NAME = "gnuplot_script"
     fun one(dir: File){
-        val data = ClusterBuilder.getDataSet(ClusterBuilder.CLUSTER_DATA.UCD_3108)
+        val data = ClusterBuilder.getDataSet(ClusterBuilder.ClusterData.UCD_3108)
         val cluster = Algorithm.hierarchicalClustering(data, 15)
         generateGnuPlotScript(dir, cluster, "1")
     }
 
     fun two(dir: File){
-        val data = ClusterBuilder.getDataSet(ClusterBuilder.CLUSTER_DATA.UCD_3108)
+        val data = ClusterBuilder.getDataSet(ClusterBuilder.ClusterData.UCD_3108)
         val cluster = Algorithm.kMeansClustering(data, data.sortedByDescending { it.populatin }.subList(0, 15).map { it.position }.toSet(), 5)
         generateGnuPlotScript(dir, cluster, "2")
     }
 
     fun four(dir: File){
-        val data = ClusterBuilder.getDataSet(ClusterBuilder.CLUSTER_DATA.UCD_212)
+        val data = ClusterBuilder.getDataSet(ClusterBuilder.ClusterData.UCD_212)
         val cluster = Algorithm.hierarchicalClustering(data, 9)
         calculateErrorAndDistortion("Hierarchical Clustering", cluster, data)
 
@@ -26,7 +28,7 @@ object Question {
     }
 
     fun five(dir: File){
-        val data = ClusterBuilder.getDataSet(ClusterBuilder.CLUSTER_DATA.UCD_212)
+        val data = ClusterBuilder.getDataSet(ClusterBuilder.ClusterData.UCD_212)
         val cluster = Algorithm.kMeansClustering(data, data.sortedByDescending { it.populatin }.subList(0, 9).map { it.position }.toSet(), 5)
         calculateErrorAndDistortion("K-Means", cluster, data)
 
@@ -34,7 +36,7 @@ object Question {
     }
 
     fun nine(dir: File){
-        val resources = listOf(ClusterBuilder.CLUSTER_DATA.UCD_212, ClusterBuilder.CLUSTER_DATA.UCD_562, ClusterBuilder.CLUSTER_DATA.UCD_1041)
+        val resources = listOf(ClusterBuilder.ClusterData.UCD_212, ClusterBuilder.ClusterData.UCD_562, ClusterBuilder.ClusterData.UCD_1041)
         resources.forEach{ r ->
             val upperLimit = 20
             val data = getDataSet(r)
@@ -72,10 +74,10 @@ object Question {
         }
     }
 
-    private fun calculateErrorAndDistortion(algo:String, clusters: List<ClusterBuilder.Cluster>, data: Set<ClusterBuilder.County>):Double{
+    private fun calculateErrorAndDistortion(algo:String, clusters: List<Cluster>, data: Set<County>):Double{
         val errors = clusters.map { cluster ->
             cluster.elements.map { county ->
-                (county as ClusterBuilder.County).populatin * Math.pow(county.position.distance(cluster.center), 2.0)
+                (county as County).populatin * Math.pow(county.position.distance(cluster.center), 2.0)
             }.sum()
         }
         val distortion = errors.sum()
@@ -87,7 +89,7 @@ object Question {
         return distortion
     }
 
-    private fun generateGnuPlotScript(dir: File, cluster: List<ClusterBuilder.Cluster>, es:String) {
+    private fun generateGnuPlotScript(dir: File, cluster: List<Cluster>, es:String) {
         val gnuplotScript = """
                 set terminal png size 1000,635
                 set xrange [0:999]

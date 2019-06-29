@@ -1,32 +1,35 @@
 package com.danielesergio.md.advancedalgorithms.clustering
 
+import com.danielesergio.md.advancedalgorithms.clustering.model.Cluster
+import com.danielesergio.md.advancedalgorithms.clustering.model.Mappable
+import com.danielesergio.md.advancedalgorithms.clustering.model.Point
 import java.lang.IllegalStateException
 
 object Algorithm {
     fun kMeansClustering(
-            points: Set<ClusterBuilder.Mappable>,
-            initialCenters: Set<ClusterBuilder.Point>,
-            iter:Int) :List<ClusterBuilder.Cluster> {
+            points: Set<Mappable>,
+            initialCenters: Set<Point>,
+            iter:Int) :List<Cluster> {
 
         var centers = initialCenters
-        var clusters: List<ClusterBuilder.Cluster> = emptyList()
+        var clusters: List<Cluster> = emptyList()
         (0 until iter).forEach{ _ ->
-            clusters = centers.map { ClusterBuilder.Cluster(center = it) }
+            clusters = centers.map { Cluster(center = it) }
             points.forEach{ mappable  ->
                 clusters.minBy {  cluster -> cluster.center.distance(mappable.position) }
                         ?.addElement(mappable)
             }
             centers = clusters.map { it.centroid() }.toSet()
         }
-        return clusters.map { ClusterBuilder.Cluster(it.elements) }
+        return clusters.map { Cluster(it.elements) }
     }
 
-    fun hierarchicalClustering(points: Set<ClusterBuilder.Mappable>, numberOfCluster:Int):List<ClusterBuilder.Cluster>{
-        var clustersSortedByX = points.map { ClusterBuilder.Cluster(elements = mutableSetOf(it)) }.toMutableList()
+    fun hierarchicalClustering(points: Set<Mappable>, numberOfCluster:Int):List<Cluster>{
+        var clustersSortedByX = points.map { Cluster(elements = mutableSetOf(it)) }.toMutableList()
         return hierarchicalClustering(clustersSortedByX, numberOfCluster)
     }
 
-    fun hierarchicalClustering(clustersSortedByX: MutableList<ClusterBuilder.Cluster>, numberOfCluster: Int):List<ClusterBuilder.Cluster>{
+    fun hierarchicalClustering(clustersSortedByX: MutableList<Cluster>, numberOfCluster: Int):List<Cluster>{
         while(clustersSortedByX.size > numberOfCluster){
             clustersSortedByX.sortBy { it.center.x }
             val S = clustersSortedByX.mapIndexed{ index, value -> value to index }.toList().sortedBy { it.first.center.y }.map { it.second }
@@ -48,7 +51,7 @@ object Algorithm {
      * con gli indici 0,...,n−1 ordinati percoordinata y crescente.
      *
      */
-    private fun fastClosestPair(ALL: List<ClusterBuilder.Cluster>, P: List<ClusterBuilder.Cluster>, S: List<Int>):ClusterDistance{
+    private fun fastClosestPair(ALL: List<Cluster>, P: List<Cluster>, S: List<Int>):ClusterDistance{
         val n = P.size
         if(n <= 3){
             return slowClosestPair(ALL, S)
@@ -67,7 +70,7 @@ object Algorithm {
 
     }
 
-    private fun closestPairStrip(ALL: List<ClusterBuilder.Cluster>, S: List<Int>, mid:Double, d:Double):ClusterDistance{
+    private fun closestPairStrip(ALL: List<Cluster>, S: List<Int>, mid:Double, d:Double):ClusterDistance{
         val S1 = mutableListOf<Int> ()
         for( s in S ){
             if(Math.abs(ALL[s].center.x - mid) < d){
@@ -100,7 +103,7 @@ object Algorithm {
 
 
 
-    private fun split(ALL: List<ClusterBuilder.Cluster>, S:List<Int>, PL: Set<ClusterBuilder.Cluster>, PR:Set<ClusterBuilder.Cluster>):Pair<List<Int>, List<Int>>{
+    private fun split(ALL: List<Cluster>, S:List<Int>, PL: Set<Cluster>, PR:Set<Cluster>):Pair<List<Int>, List<Int>>{
         val SL = mutableListOf<Int>()
         val SR = mutableListOf<Int>()
         S.forEach { s ->
@@ -116,7 +119,7 @@ object Algorithm {
         return Pair(SL, SR)
     }
 
-    private fun slowClosestPair(ALL: List<ClusterBuilder.Cluster>, S: List<Int>):ClusterDistance{
+    private fun slowClosestPair(ALL: List<Cluster>, S: List<Int>):ClusterDistance{
         var result = ClusterDistance()
         //todo check this step
         for(i in 0 until S.size){
