@@ -22,6 +22,7 @@ fun main() {
     dir.mkdirs()
 
     Question.one(dir)
+    Question.two(dir)
 
 
 }
