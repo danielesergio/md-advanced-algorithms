@@ -41,21 +41,22 @@ object ParallelAlgorithm {
                 pointsToCluster[pointIndex] = clusterIndex
                 LOG.debug("point assigned to cluster")
             }
-        }
-        LOG.debug("clusters calculated")
-        LOG.debug("calculating clusters centroid")
 
-        centers.forEachIndexed { index, _ ->
-            LOG.debug("start calculating center $index")
-            val clusterPoints = pointsToCluster.mapIndexed{ pointIndex, clusterIndex -> pointIndex to clusterIndex}
-                    .filter { (_, cluster) -> cluster == index }
-            val sumAllPoint = clusterPoints.fold(Point(0.0,0.0)){ acc, v ->
-                acc.sum(points[v.first].position)
+            LOG.debug("clusters calculated")
+            LOG.debug("calculating clusters centroid")
+
+            centers.forEachIndexed { index, _ ->
+                LOG.debug("start calculating center $index")
+                val clusterPoints = pointsToCluster.mapIndexed{ pointIndex, clusterIndex -> pointIndex to clusterIndex}
+                        .filter { (_, cluster) -> cluster == index }
+                val sumAllPoint = clusterPoints.fold(Point(0.0,0.0)){ acc, v ->
+                    acc.sum(points[v.first].position)
+                }
+                centers[index] =  Point(sumAllPoint.x / clusterPoints.size, sumAllPoint.y / clusterPoints.size)
+                LOG.debug("$index center calculated")
             }
-            centers[index] =  Point(sumAllPoint.x / clusterPoints.size, sumAllPoint.y / clusterPoints.size)
-            LOG.debug("$index center calculated")
+            LOG.debug("calculated clusters centroid")
         }
-        LOG.debug("calculated clusters centroid")
         return KMeansResult(points, centers.toList(), pointsToCluster.toList())
     }
 
