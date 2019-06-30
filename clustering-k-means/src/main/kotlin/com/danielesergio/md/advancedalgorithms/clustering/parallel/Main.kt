@@ -21,8 +21,10 @@ fun main() {
     dir.deleteRecursively()
     dir.mkdirs()
 
-    Question.one(dir)
-    Question.two(dir)
+//    Question.one(dir)
+//    Question.two(dir)
+//    Question.three(dir)
+    Question.four(dir)
 
 
 }
