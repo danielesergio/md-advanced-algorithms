@@ -141,8 +141,6 @@ object ParallelAlgorithm {
 
         //Create three FolderProcessor tasks. Initialize each one with a different folder path.
 
-        var firstStep = 0L
-        var secondStep = 0L
         (0 until iter).forEach{ _ ->
             LOG.debug("calculating clusters")
             points.forEachIndexed{ pointIndex, currentPoint  ->
@@ -161,8 +159,6 @@ object ParallelAlgorithm {
             ForkJoinPool.commonPool().awaitQuiescence(2, TimeUnit.MINUTES)
             LOG.debug("calculated clusters centroid")
         }
-        LOG.info("firstStep - parallel: ${firstStep / 1000}")
-        LOG.info("secondStep - parallel: ${secondStep / 1000}")
         return KMeansResult(points.toList(), centers.toList(), pointToCluster.toList())
     }
 
