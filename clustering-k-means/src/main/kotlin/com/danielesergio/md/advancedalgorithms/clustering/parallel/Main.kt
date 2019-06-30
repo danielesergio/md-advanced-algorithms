@@ -13,7 +13,7 @@ import java.time.Instant
  */
 
 fun main() {
-    System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "ERROR")
+    System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "INFO")
 
 //    val dir = File("./data")
 //
@@ -55,7 +55,7 @@ private fun testSerial(initialCenter:Array<Point>, iter:Int):Duration {
     val cities = ClusterBuilderData.getCity(ClusterBuilderData.CityFilterByPop.ALL)
 
     val now = Instant.now()
-    val result = ParallelAlgorithm.kMeansClusteringWithCoroutine(cities,initialCenter, iter)
+    val result = ParallelAlgorithm.kMeansClusteringSerial(cities,initialCenter, iter)
 //    calculateErrorAndDistortion("Seriale",result.toClusters(), cities )
     return Duration.between(now, Instant.now())
 
