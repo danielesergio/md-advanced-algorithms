@@ -18,22 +18,22 @@ fun main() {
 //    dir.deleteRecursively()
 //    dir.mkdirs()
 //
-    val avgP = (0..100).map{
+    val avgP = (0..0).map{
         testParellal().toMillis()
     }.average()
 
-//    val avgS = (0..1).map{
-//        testSerial().toMillis()
-//    }.average()
+    val avgS = (0..0).map{
+        testSerial().toMillis()
+    }.average()
 
     println("AVG-P: $avgP")
-//    println("AVG-S: $avgS")
+    println("AVG-S: $avgS")
 }
 
 private fun testParellal():Duration {
     val cities = ClusterBuilderData.getCity(ClusterBuilderData.CityFilterByPop.ALL)
 
-    val initialCenter = (0 until 20).map { cities.random().position }.toTypedArray()
+    val initialCenter = (0 until 50).map { cities.random().position }.toTypedArray()
     val now = Instant.now()
     ParallelAlgorithm.kMeansClustering(cities, initialCenter, 1)
     return Duration.between(now, Instant.now())
@@ -43,7 +43,7 @@ private fun testParellal():Duration {
 private fun testSerial():Duration {
     val cities = ClusterBuilderData.getCity(ClusterBuilderData.CityFilterByPop.ALL)
 
-    val initialCenter = (0..20).map { cities.random().position }.toTypedArray()
+    val initialCenter = (0 until 50).map { cities.random().position }.toTypedArray()
     val now = Instant.now()
     Algorithm.kMeansClustering(cities.toSet(),initialCenter.toSet(), 1)
     return Duration.between(now, Instant.now())
