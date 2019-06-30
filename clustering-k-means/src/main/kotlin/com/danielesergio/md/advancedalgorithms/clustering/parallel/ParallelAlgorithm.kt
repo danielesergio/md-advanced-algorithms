@@ -1,34 +1,24 @@
 package com.danielesergio.md.advancedalgorithms.clustering.parallel
 
+import com.danielesergio.md.advancedalgorithms.clustering.model.Cluster
 import com.danielesergio.md.advancedalgorithms.clustering.model.Mappable
 import com.danielesergio.md.advancedalgorithms.clustering.model.Point
-import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
 import java.util.concurrent.*
 import kotlin.math.floor
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.ceil
-import kotlin.math.log2
 
 
 object ParallelAlgorithm {
     val LOG = LoggerFactory.getLogger(ParallelAlgorithm::class.java)
-    data class KMeansResult(val points:List<Mappable>, val center:List<Point>, val pointsPartition:List<Int>)
-
-    private suspend fun parallelReduceCluster(i:Int, j:Int, f:Int, cluster: Array<Int>, points:List<Mappable> ): Deferred<Pair<Point, Int>> = GlobalScope.async{
-        LOG.debug("parallelReduceCluster $i, $j, $f")
-        if(i == j){
-            if(cluster[i] == f){
-                Pair(points[i].position, 1)
-            } else {
-                Pair(Point(0.0,0.0), 0)
+    data class KMeansResult(val points:List<Mappable>, val center:List<Point>, val pointToCluster:List<Int>){
+        fun toClusters():List<Cluster>{
+            val clusters = center.mapIndexed { index, point -> index to Cluster(center = point) }.toMap()
+            pointToCluster.forEachIndexed { pointIndex, clusterIndex ->
+                clusters.getValue(clusterIndex).addElement(points[pointIndex])
             }
-        } else {
-            val mid =  i + (j - i) / 2
-            val first = parallelReduceCluster(i, mid, f, cluster, points)
-            val secondPoint = parallelReduceCluster(mid +1, j, f, cluster, points).await()
-            val firstPoint = first.await()
-            Pair(firstPoint.first.sum(secondPoint.first), firstPoint.second + secondPoint.second)
+            return clusters.values.toList()
         }
     }
 
@@ -38,46 +28,33 @@ object ParallelAlgorithm {
             iter:Int): KMeansResult{
 
         val centers: Array<Point> = initialCenters.clone()
-        val cluster: Array<Int> = Array(points.size){-1}
-
+        val pointsToCluster: Array<Int> = Array(points.size){-1}
 
 
         (0 until iter).forEach{ _ ->
-            val assignamentJob = GlobalScope.launch {
-                LOG.info("calculating clusters")
-                points.forEachIndexed{ pointIndex, currentPoint  ->
-                    launch {
-                        val clusterIndex = centers.mapIndexed(){ index, center -> index to center}
-                                .minBy { (_,center) -> center.distance(currentPoint.position) }!!.first
-                        cluster[pointIndex] = clusterIndex
-                        LOG.debug("point assigned to cluster")
-                    }
-                }
+            LOG.info("calculating clusters")
+            points.forEachIndexed{ pointIndex, currentPoint  ->
+                val clusterIndex = centers.mapIndexed(){ index, center -> index to center}
+                        .minBy { (_,center) -> center.distance(currentPoint.position) }!!.first
+                pointsToCluster[pointIndex] = clusterIndex
+                LOG.debug("point assigned to cluster")
             }
-            runBlocking {
-                assignamentJob.join()
-            }
-            LOG.info("clusters calculated")
-            LOG.info("calculating clusters centroid")
-
-            val updateJob = GlobalScope.launch {
-                centers.forEachIndexed { index, center ->
-                    launch {
-                        LOG.debug("start calculating center $index")
-                        val partialresult = parallelReduceCluster(0, points.size -1, index, cluster, points).await()
-                        centers[index] =  Point(partialresult.first.x / partialresult.second, partialresult.first.y / partialresult.second)
-                        LOG.debug("$index center calculated")
-                    }
-                }
-            }
-
-            runBlocking{
-                updateJob.join()
-            }
-            LOG.info("calculated clusters centroid")
         }
+        LOG.info("clusters calculated")
+        LOG.info("calculating clusters centroid")
 
-        return KMeansResult(points, centers.toList(), cluster.toList())
+        centers.forEachIndexed { index, _ ->
+            LOG.debug("start calculating center $index")
+            val clusterPoints = pointsToCluster.mapIndexed{ pointIndex, clusterIndex -> pointIndex to clusterIndex}
+                    .filter { (_, cluster) -> cluster == index }
+            val sumAllPoint = clusterPoints.fold(Point(0.0,0.0)){ acc, v ->
+                acc.sum(points[v.first].position)
+            }
+            centers[index] =  Point(sumAllPoint.x / clusterPoints.size, sumAllPoint.y / clusterPoints.size)
+            LOG.debug("$index center calculated")
+        }
+        LOG.info("calculated clusters centroid")
+        return KMeansResult(points, centers.toList(), pointsToCluster.toList())
     }
 
 
@@ -92,7 +69,7 @@ object ParallelAlgorithm {
         override fun compute(): Pair<Point, Int> {
             return if(j - i <= threshold){
                 val p = (i .. j).filter{ pointToCluster[it] == f}
-                        .map{ points[i].position}
+                        .map{ points[it].position}
                 val b = p.fold(Point(0.0,0.0)){ acc, value -> acc.sum(value)}
                 Pair(b, p.size)
             } else {
@@ -105,56 +82,6 @@ object ParallelAlgorithm {
                 Pair(firstPoint.first.sum(secondPoint.first), firstPoint.second + secondPoint.second)
             }
 
-        }
-    }
-
-    private class ParallelReduceCluster(val i:Int, val j:Int, val f:Int, val cluster:Array<Int>, val points:List<Mappable>): RecursiveTask<Pair<Point, Int>>(){
-        override fun compute(): Pair<Point, Int> {
-            return if(i == j){
-                if(cluster[i] == f){
-                    Pair(points[i].position, 1)
-                } else {
-                    Pair(Point(0.0,0.0), 0)
-                }
-            } else {
-                val mid = floor((i + j).toDouble() / 2).toInt()
-                val first = ParallelReduceCluster(i, mid, f, cluster, points)
-                first.fork()
-                val secondPoint = ParallelReduceCluster(mid +1, j, f, cluster, points).compute()!!
-                val firstPoint = first.join()
-                Pair(firstPoint.first.sum(secondPoint.first), firstPoint.second + secondPoint.second)
-            }
-
-        }
-    }
-
-    private class ParallelCentroid(val f:Int, val cluster:Array<Int>, val points:List<Mappable>, val centers:Array<Point>) :RecursiveAction(){
-        val threshold = ceil(points.size.toDouble() / ForkJoinPool.commonPool().parallelism).toInt()
-
-        override fun compute() {
-            val task = ParallelAlgorithm.ParallelReduceClusterWithThreshold(0,points.size -1,f,cluster,points, points.size).fork()
-            val partialresult = task.join()
-            centers[f] =  Point(partialresult.first.x / partialresult.second, partialresult.first.y / partialresult.second)
-        }
-    }
-
-    //work O(k)e span O(logk)
-    private class ParallelArgMin(val i:Int,
-                                 val j:Int,
-                                 val centersIndex : List<Pair<Int, Point>>,
-                                 val point: Pair<Int,Point> /*point index, point*/  ) :RecursiveTask<Int>(){
-        override fun compute():Int {
-            return if( i == j){
-                listOf(i,j).minBy { centersIndex[it].second.distance(point.second)}!!
-            } else {
-                val mid = floor((i + j).toDouble() / 2).toInt()
-                val first = ParallelArgMin(i, mid, centersIndex, point)
-                first.fork()
-                val secondIndex = ParallelArgMin(mid+1, j, centersIndex, point).compute()!!
-                val firstIndex = first.join()
-                listOf(firstIndex, secondIndex)
-                        .minBy { centersIndex[it].second.distance(point.second) }!!
-            }
         }
     }
 
@@ -185,13 +112,22 @@ object ParallelAlgorithm {
         val threshold = ceil(centersIndex.size.toDouble() / ForkJoinPool.commonPool().parallelism).toInt()
 
         override fun compute() {
-            val task = ParallelAlgorithm.ParallelArgMinWithThreshold(0,centersIndex.size -1, centersIndex, point, centersIndex.size).fork()
+            val task = ParallelAlgorithm.ParallelArgMinWithThreshold(0,centersIndex.size -1, centersIndex, point, Int.MAX_VALUE).fork()
             val centerIndex = task.join()
             pointToCluster[point.first] =  centerIndex
             LOG.debug("point assigned to cluster")
         }
     }
 
+    private class ParallelCentroid(val f:Int, val cluster:Array<Int>, val points:List<Mappable>, val centers:Array<Point>) :RecursiveAction(){
+        val threshold = ceil(points.size.toDouble() / ForkJoinPool.commonPool().parallelism).toInt()
+
+        override fun compute() {
+            val task = ParallelAlgorithm.ParallelReduceClusterWithThreshold(0,points.size -1,f,cluster,points, Int.MAX_VALUE).fork()
+            val partialresult = task.join()
+            centers[f] =  Point(partialresult.first.x / partialresult.second, partialresult.first.y / partialresult.second)
+        }
+    }
 
     fun kMeansClustering(
             points: List<Mappable>,
@@ -207,23 +143,22 @@ object ParallelAlgorithm {
         (0 until iter).forEach{ _ ->
             LOG.info("calculating clusters")
             points.forEachIndexed{ pointIndex, currentPoint  ->
-                ForkJoinPool.commonPool().execute(ParallelAssignament(centerIndex, Pair(pointIndex,currentPoint.position),pointToCluster))
+                val task = ParallelAssignament(centerIndex, Pair(pointIndex,currentPoint.position),pointToCluster)
+                ForkJoinPool.commonPool().execute(task)
             }
-            ForkJoinPool.commonPool().awaitQuiescence(10, TimeUnit.MINUTES)
+            ForkJoinPool.commonPool().awaitQuiescence(2, TimeUnit.MINUTES)
             LOG.info("clusters calculated")
             LOG.info("calculating clusters centroid")
 
             centerIndex.forEach{ (index, center) ->
                 LOG.debug("start calculating center $index")
-                ForkJoinPool.commonPool().execute(ParallelCentroid(index, pointToCluster, points, centers))
-                println(ForkJoinPool.commonPool())
-                LOG.debug("$index center calculated")
+                val task = ParallelCentroid(index, pointToCluster, points, centers)
+                ForkJoinPool.commonPool().execute(task)
             }
-            LOG.info("calculated clusters centroid")
-            ForkJoinPool.commonPool().awaitQuiescence(10, TimeUnit.MINUTES)
-        }
+            ForkJoinPool.commonPool().awaitQuiescence(2, TimeUnit.MINUTES)
 
-        println(ForkJoinPool.commonPool())
+            LOG.info("calculated clusters centroid")
+        }
         return KMeansResult(points.toList(), centers.toList(), pointToCluster.toList())
     }
 
