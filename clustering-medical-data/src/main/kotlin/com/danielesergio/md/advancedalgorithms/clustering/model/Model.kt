@@ -27,7 +27,11 @@ data class Cluster(val elements:MutableSet<Mappable> = mutableSetOf(), val cente
     }
 
     fun centroid(): Point {
-        return elements.centroid()
+        return if(elements.isEmpty()) {
+            center
+        } else {
+            elements.centroid()
+        }
     }
 
 }
