@@ -1,6 +1,7 @@
 package com.danielesergio.md.advancedalgorithms.clustering.parallel
 
 import com.danielesergio.md.advancedalgorithms.clustering.Algorithm
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.time.Duration
 import java.time.Instant
@@ -8,6 +9,8 @@ import java.time.Instant
 //todo calculate speedup
 //todo use geo coordinate
 object Question {
+    val LOG = LoggerFactory.getLogger(Question::class.java.simpleName)
+
     const val GNUPLOT_FILE_NAME = "gnuplot_script"
 
     const val PARALLEL_ALGO_NAME_WITHOUT_THRESHOLD = "Parallel_no_threshold"
@@ -84,6 +87,7 @@ object Question {
 
         //(10 .. 100).forEach{ clusterSize ->
         for(clusterSize in 10 .. 100 step 10){
+            LOG.error("cluster size: $clusterSize")
             val initialCenter = (0 until clusterSize).map{ data.random().position}.toSet()
             val initialCenterArray = initialCenter.toTypedArray()
 
@@ -137,7 +141,10 @@ object Question {
         )
 
 //        (10 .. 1000).forEach{ iter ->
-        for(iter in 10 .. 1000 step 10){
+        for(i in 0 .. 1000 step 50){
+            val iter = if (i == 0) 10 else i
+            LOG.error("iter size: $iter")
+
             val initialCenter = (0 until 50).map{ data.random().position}.toSet()
             val initialCenterArray = initialCenter.toTypedArray()
 

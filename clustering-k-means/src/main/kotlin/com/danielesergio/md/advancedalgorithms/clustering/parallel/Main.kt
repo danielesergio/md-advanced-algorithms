@@ -14,6 +14,7 @@ import java.time.Instant
  */
 
 fun main() {
+    val now = Instant.now()
     System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "INFO")
 
     val dir = File("./data5")
@@ -21,11 +22,12 @@ fun main() {
     dir.deleteRecursively()
     dir.mkdirs()
 
-//    Question.one(dir)
-//    Question.two(dir)
-//    Question.three(dir)
+    Question.one(dir)
+    Question.two(dir)
+    Question.three(dir)
     Question.four(dir)
 
+    println("Execution time: ${Duration.between(now, Instant.now())}")
 
 }
 
