@@ -1,5 +1,6 @@
 package com.danielesergio.md.advancedalgorithms.clustering.parallel
 
+import com.danielesergio.md.advancedalgorithms.clustering.model.Distance
 import com.danielesergio.md.advancedalgorithms.clustering.model.Mappable
 import com.danielesergio.md.advancedalgorithms.clustering.model.Point
 import java.util.zip.ZipFile
@@ -44,8 +45,9 @@ object ClusterBuilderData {
                                     name = data[1],
                                     population = data[2].toLong(),
                                     position = Point(
-                                            x = data[3].toDouble(),
-                                            y = data[4].toDouble()
+                                            x = Distance.GEO.convert(data[3].toDouble()),
+                                            y = Distance.GEO.convert(data[4].toDouble()),
+                                            distance = Distance.GEO
                                     )
                             )
                     )

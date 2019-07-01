@@ -15,7 +15,6 @@ object Question {
 
     const val PARALLEL_ALGO_NAME_WITHOUT_THRESHOLD = "Parallel_no_threshold"
     const val PARALLEL_ALGO_NAME_WITH_THRESHOLD = "Parallel_with_threshold"
-    const val PARALLEL_ALGO_NAME_WITH_THRESHOLD_ARG_MIN = "Parallel_with_threshold_arg_min"
     const val PARALLEL_ALGO_NAME_WITH_THRESHOLD_CENTROID = "Parallel_with_threshold_centroid"
     const val SERIAL_ALGO_NAME = "Serial"
     const val ES4_ALGO_NAME = "Es4"
@@ -38,11 +37,11 @@ object Question {
             val initialCenterArray = initialCenter.toTypedArray()
 
             result[PARALLEL_ALGO_NAME_WITHOUT_THRESHOLD]!!.add(Pair(data.size, getExecutionTime {
-                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, 100, 0, 0)
+                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, 100, 0)
             }))
 
             result[PARALLEL_ALGO_NAME_WITH_THRESHOLD]!!.add(Pair(data.size, getExecutionTime {
-                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, 100, data.size, data.size)
+                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, 100, data.size)
             }))
 
             result[SERIAL_ALGO_NAME]!!.add(Pair(data.size, getExecutionTime {
@@ -92,11 +91,11 @@ object Question {
             val initialCenterArray = initialCenter.toTypedArray()
 
             result[PARALLEL_ALGO_NAME_WITHOUT_THRESHOLD]!!.add(Pair(clusterSize, getExecutionTime {
-                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, 100, 0, 0)
+                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, 100, 0)
             }))
 
             result[PARALLEL_ALGO_NAME_WITH_THRESHOLD]!!.add(Pair(clusterSize, getExecutionTime {
-                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, 100, data.size, data.size)
+                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, 100, data.size)
             }))
 
             result[SERIAL_ALGO_NAME]!!.add(Pair(clusterSize, getExecutionTime {
@@ -149,11 +148,11 @@ object Question {
             val initialCenterArray = initialCenter.toTypedArray()
 
             result[PARALLEL_ALGO_NAME_WITHOUT_THRESHOLD]!!.add(Pair(iter, getExecutionTime {
-                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, iter, 0, 0)
+                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, iter, 0)
             }))
 
             result[PARALLEL_ALGO_NAME_WITH_THRESHOLD]!!.add(Pair(iter, getExecutionTime {
-                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, iter, data.size, data.size)
+                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, iter, data.size)
             }))
 
             result[SERIAL_ALGO_NAME]!!.add(Pair(iter, getExecutionTime {
@@ -191,8 +190,6 @@ object Question {
         val data = ClusterBuilderData.getCity(ClusterBuilderData.CityFilterByPop.ALL)
 
         val result = mutableMapOf<String, MutableSet<Pair<Int, Duration>>>(
-//                PARALLEL_ALGO_NAME_WITH_THRESHOLD to mutableSetOf(),
-                PARALLEL_ALGO_NAME_WITH_THRESHOLD_ARG_MIN to mutableSetOf(),
                 PARALLEL_ALGO_NAME_WITH_THRESHOLD_CENTROID to mutableSetOf()
         )
 
@@ -201,13 +198,7 @@ object Question {
 
         listOf(0, 25, 50, 100, 200, 400, 600, 800, 1_000, 5_000, 15000, data.size).forEach{ threshold ->
             result[PARALLEL_ALGO_NAME_WITH_THRESHOLD_CENTROID]!!.add(Pair(threshold, getExecutionTime {
-                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, 100, 0, threshold)
-            }))
-        }
-
-        listOf(0, 15, 35, 50, 65, 85, 100, 500, 1000, data.size).forEach{ threshold ->
-            result[PARALLEL_ALGO_NAME_WITH_THRESHOLD_ARG_MIN]!!.add(Pair(threshold, getExecutionTime {
-                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, 100, threshold, 0 )
+                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, 100, threshold)
             }))
         }
 
@@ -229,15 +220,6 @@ object Question {
                 set autoscale xfix
                 set autoscale yfix
                 plot  "es4_$PARALLEL_ALGO_NAME_WITH_THRESHOLD_CENTROID.data" using 1:2 with lines lw 2 title '${PARALLEL_ALGO_NAME_WITH_THRESHOLD_CENTROID.split('_').joinToString(" ")}'
-
-                set terminal png size 800,600
-                set output 'question_4_threshold_arg_min.png'
-                set ylabel "Execution time (in milliseconds)"
-                set xlabel "Threshold P-ARGMIN"
-                set autoscale xfix
-                set autoscale yfix
-                plot  "es4_$PARALLEL_ALGO_NAME_WITH_THRESHOLD_ARG_MIN.data" using 1:2 with lines lw 2 title '${PARALLEL_ALGO_NAME_WITH_THRESHOLD_ARG_MIN.split('_').joinToString(" ")}'
-
         """.trimIndent())
     }
 
