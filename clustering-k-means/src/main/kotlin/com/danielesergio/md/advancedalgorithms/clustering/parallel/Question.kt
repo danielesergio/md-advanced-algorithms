@@ -14,7 +14,7 @@ object Question {
     const val GNUPLOT_FILE_NAME = "gnuplot_script"
 
     const val PARALLEL_ALGO_NAME_WITHOUT_THRESHOLD = "Parallel_no_threshold"
-    const val PARALLEL_ALGO_NAME_WITH_THRESHOLD = "Parallel_with_threshold"
+    const val PARALLEL_ALGO_NAME_WITH_THRESHOLD = "Parallel_with_threshold_100"
     const val PARALLEL_ALGO_NAME_WITH_THRESHOLD_CENTROID = "Parallel_with_threshold_centroid"
     const val SERIAL_ALGO_NAME = "Serial"
     const val ES4_ALGO_NAME = "Es4"
@@ -46,7 +46,7 @@ object Question {
             }))
 
             result[PARALLEL_ALGO_NAME_WITH_THRESHOLD]!!.add(Pair(data.size, getExecutionTime {
-                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, 100, data.size)
+                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, 100, 100)
             }))
 
             result[SERIAL_ALGO_NAME]!!.add(Pair(data.size, getExecutionTime {
@@ -74,6 +74,14 @@ object Question {
 
         val gnuPlotFile = File(dir, GNUPLOT_FILE_NAME)
         gnuPlotFile.appendText("""
+                set terminal png size 800,600
+                set output 'question_1_speedUp.png'
+                set ylabel "SpeedUp Factor"
+                set xlabel "Number of Points"
+                set autoscale xfix
+                set autoscale yfix
+                plot es1_$NO_TRESHOLD_SERIAL.data" using 1:2 with lines lw 2 title 'SpeedUp Threshold 0 (Serial version)', es1_$TRESHOLD_SERIAL.data" using 1:2 with lines lw 2 title 'SpeedUp Threshold (Serial version)', es1_$NO_TRESHOLD_ES4.data" using 1:2 with lines lw 2 title 'SpeedUp Threshold 0 (Es 4)', es1_$TRESHOLD_ES4.data" using 1:2 with lines lw 2 title 'SpeedUp Threshold (Es 4)'
+
                 set terminal png size 800,600
                 set output 'question_1.png'
                 set ylabel "Execution time (in milliseconds)"
@@ -105,7 +113,7 @@ object Question {
             }))
 
             result[PARALLEL_ALGO_NAME_WITH_THRESHOLD]!!.add(Pair(clusterSize, getExecutionTime {
-                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, 100, data.size)
+                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, 100, 100)
             }))
 
             result[SERIAL_ALGO_NAME]!!.add(Pair(clusterSize, getExecutionTime {
@@ -133,6 +141,13 @@ object Question {
 
         val gnuPlotFile = File(dir, GNUPLOT_FILE_NAME)
         gnuPlotFile.appendText("""
+                set terminal png size 800,600
+                set output 'question_2_speedUp.png'
+                set ylabel "SpeedUp Factor"
+                set xlabel "Number of clusters"
+                set autoscale xfix
+                set autoscale yfix
+                plot es2_$NO_TRESHOLD_SERIAL.data" using 1:2 with lines lw 2 title 'SpeedUp Threshold 0 (Serial version)', es2_$TRESHOLD_SERIAL.data" using 1:2 with lines lw 2 title 'SpeedUp Threshold (Serial version)', es2_$NO_TRESHOLD_ES4.data" using 1:2 with lines lw 2 title 'SpeedUp Threshold 0 (Es 4)', es2_$TRESHOLD_ES4.data" using 1:2 with lines lw 2 title 'SpeedUp Threshold (Es 4)'
 
                 set terminal png size 800,600
                 set output 'question_2.png'
@@ -167,7 +182,7 @@ object Question {
             }))
 
             result[PARALLEL_ALGO_NAME_WITH_THRESHOLD]!!.add(Pair(iter, getExecutionTime {
-                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, iter, data.size)
+                ParallelAlgorithm.kMeansClustering(data, initialCenterArray, iter, 100)
             }))
 
             result[SERIAL_ALGO_NAME]!!.add(Pair(iter, getExecutionTime {
@@ -195,7 +210,14 @@ object Question {
 
         val gnuPlotFile = File(dir, GNUPLOT_FILE_NAME)
         gnuPlotFile.appendText("""
-            
+                set terminal png size 800,600
+                set output 'question_3_speedUp.png'
+                set ylabel "SpeedUp Factor"
+                set xlabel "Number of iterations"
+                set autoscale xfix
+                set autoscale yfix
+                plot es3_$NO_TRESHOLD_SERIAL.data" using 1:2 with lines lw 2 title 'SpeedUp Threshold 0 (Serial version)', es3_$TRESHOLD_SERIAL.data" using 1:2 with lines lw 2 title 'SpeedUp Threshold (Serial version)', es3_$NO_TRESHOLD_ES4.data" using 1:2 with lines lw 2 title 'SpeedUp Threshold 0 (Es 4)', es3_$TRESHOLD_ES4.data" using 1:2 with lines lw 2 title 'SpeedUp Threshold (Es 4)'
+
                 set terminal png size 800,600
                 set output 'question_3.png'
                 set ylabel "Execution time (in milliseconds)"
@@ -216,7 +238,7 @@ object Question {
         val initialCenter = (0 until 50).map{ data.random().position}.toSet()
         val initialCenterArray = initialCenter.toTypedArray()
 
-        listOf(0, 25, 50, 100, 200, 400, 600, 800, 1_000, 5_000, 15000, data.size).forEach{ threshold ->
+        listOf(0, 25, 50, 75, 100, 125, 150, 175, 200).forEach{ threshold ->
             result[PARALLEL_ALGO_NAME_WITH_THRESHOLD_CENTROID]!!.add(Pair(threshold, getExecutionTime {
                 ParallelAlgorithm.kMeansClustering(data, initialCenterArray, 100, threshold)
             }))
@@ -245,7 +267,7 @@ object Question {
 
     fun speedUp(t1:Set<Pair<Int,Duration>>, tn:Set<Pair<Int,Duration>>, file:File){
         t1.zip(tn).forEach { 
-            file.appendText("${it.first}, ${it.first.second.toMillis() / it.second.second.toMillis()}")
+            file.appendText("${it.first.first}, ${it.second.second.toMillis() / it.first.second.toMillis()} \n")
         }
     }
 
