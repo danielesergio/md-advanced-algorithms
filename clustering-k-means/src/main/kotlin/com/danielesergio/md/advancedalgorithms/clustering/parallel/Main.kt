@@ -22,9 +22,9 @@ fun main() {
     dir.deleteRecursively()
     dir.mkdirs()
 
-    Question.one(dir)
-    Question.two(dir)
-    Question.three(dir)
+//    Question.one(dir)
+//    Question.two(dir)
+//    Question.three(dir)
     Question.four(dir)
 
     println("Execution time: ${Duration.between(now, Instant.now())}")

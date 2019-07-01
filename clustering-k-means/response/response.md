@@ -48,7 +48,7 @@ Calcolate lo speedup ottenuto dall'algoritmo parallelo. Come varia rispetto al n
 
 ### Grafici Seepup
 
-![](./question_1_speedUp.png.png?raw=true)
+![](./question_1_speedUp.png?raw=true)
 
 # Domanda 2
 Confrontate i tempi di calcolo dell'algoritmo seriale e dell'algoritmo parallelo per il clustering k-means, al variare del numero di cluster. 
@@ -66,7 +66,7 @@ Calcolate lo speedup ottenuto dall'algoritmo parallelo. Come varia rispetto al n
 
 ### Grafici Seepup
 
-![](./question_2_speedUp.png.png?raw=true)
+![](./question_2_speedUp.png?raw=true)
 
 # Domanda 3
 Confrontate i tempi di calcolo dell'algoritmo seriale e dell'algoritmo parallelo per il clustering k-means, al variare del numero di iterazioni. 
@@ -84,7 +84,7 @@ Calcolate lo speedup ottenuto dall'algoritmo parallelo. Come varia rispetto al n
 
 ### Grafici Seepup
 
-![](./question_3_speedUp.png.png?raw=true)
+![](./question_3_speedUp.png?raw=true)
 
 # Domanda 4
 Per migliorare i tempi di calcolo di un algoritmo risulta spesso utile limitare il parallelismo, passando ad una procedura seriale quando la dimensione dell'input scende sotto una certa soglia. Per esempio, in un algoritmo divide-et-impera si può stabilire una soglia di cutoff al di sotto della quale si utilizza un algoritmo seriale iterativo, invece di dividere ulteriormente l'input e procedere in parallelo.
