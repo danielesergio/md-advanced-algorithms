@@ -28,3 +28,9 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+task Homework5(type: JavaExec) {
+    group = 'Exercise'
+    main = 'com.danielesergio.md.advancedalgorithms.clustering.parallel.Main'
+    classpath = sourceSets.main.runtimeClasspath
+}

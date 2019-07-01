@@ -6,8 +6,6 @@ import java.io.File
 import java.time.Duration
 import java.time.Instant
 
-//todo calculate speedup
-//todo use geo coordinate
 object Question {
     val LOG = LoggerFactory.getLogger(Question::class.java.simpleName)
 
@@ -267,7 +265,7 @@ object Question {
 
     fun speedUp(t1:Set<Pair<Int,Duration>>, tn:Set<Pair<Int,Duration>>, file:File){
         t1.zip(tn).forEach { 
-            file.appendText("${it.first.first}, ${it.second.second.toMillis() / it.first.second.toMillis()} \n")
+            file.appendText("${it.first.first}, ${it.second.second.toMillis().toDouble() / it.first.second.toMillis().toDouble()} \n")
         }
     }
 
