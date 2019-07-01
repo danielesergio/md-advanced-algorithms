@@ -236,7 +236,7 @@ object Question {
         val initialCenter = (0 until 50).map{ data.random().position}.toSet()
         val initialCenterArray = initialCenter.toTypedArray()
 
-        listOf(0, 25, 50, 75, 100, 125, 150, 175, 200).forEach{ threshold ->
+        listOf(0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 300, 350, 400, 450, 500).forEach{ threshold ->
             result[PARALLEL_ALGO_NAME_WITH_THRESHOLD_CENTROID]!!.add(Pair(threshold, getExecutionTime {
                 ParallelAlgorithm.kMeansClustering(data, initialCenterArray, 100, threshold)
             }))
