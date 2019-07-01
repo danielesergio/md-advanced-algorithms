@@ -19,6 +19,11 @@ object Question {
     const val SERIAL_ALGO_NAME = "Serial"
     const val ES4_ALGO_NAME = "Es4"
 
+    const val NO_TRESHOLD_SERIAL = "no_threshold_serial"
+    const val TRESHOLD_SERIAL = "threshold_serial"
+    const val NO_TRESHOLD_ES4 = "no_threshold_es4"
+    const val TRESHOLD_ES4 = "threshold_es4"
+
     fun one(dir: File){
 
         dir.mkdirs()
@@ -61,6 +66,11 @@ object Question {
                 file.appendText("${data.first}, ${data.second.toMillis()}\n")
             }
         }
+
+        speedUp(result[PARALLEL_ALGO_NAME_WITHOUT_THRESHOLD]!!, result[SERIAL_ALGO_NAME]!! ,File(dir, "es1_$NO_TRESHOLD_SERIAL.data"))
+        speedUp(result[PARALLEL_ALGO_NAME_WITH_THRESHOLD]!!, result[SERIAL_ALGO_NAME]!! ,File(dir, "es1_$TRESHOLD_SERIAL.data"))
+        speedUp(result[PARALLEL_ALGO_NAME_WITHOUT_THRESHOLD]!!, result[ES4_ALGO_NAME]!! ,File(dir, "es1_$NO_TRESHOLD_ES4.data"))
+        speedUp(result[PARALLEL_ALGO_NAME_WITH_THRESHOLD]!!, result[ES4_ALGO_NAME]!! ,File(dir, "es1_$TRESHOLD_ES4.data"))
 
         val gnuPlotFile = File(dir, GNUPLOT_FILE_NAME)
         gnuPlotFile.appendText("""
@@ -116,9 +126,14 @@ object Question {
             }
         }
 
+        speedUp(result[PARALLEL_ALGO_NAME_WITHOUT_THRESHOLD]!!, result[SERIAL_ALGO_NAME]!! ,File(dir, "es2_$NO_TRESHOLD_SERIAL.data"))
+        speedUp(result[PARALLEL_ALGO_NAME_WITH_THRESHOLD]!!, result[SERIAL_ALGO_NAME]!! ,File(dir, "es2_$TRESHOLD_SERIAL.data"))
+        speedUp(result[PARALLEL_ALGO_NAME_WITHOUT_THRESHOLD]!!, result[ES4_ALGO_NAME]!! ,File(dir, "es2_$NO_TRESHOLD_ES4.data"))
+        speedUp(result[PARALLEL_ALGO_NAME_WITH_THRESHOLD]!!, result[ES4_ALGO_NAME]!! ,File(dir, "es2_$TRESHOLD_ES4.data"))
+
         val gnuPlotFile = File(dir, GNUPLOT_FILE_NAME)
         gnuPlotFile.appendText("""
-            
+
                 set terminal png size 800,600
                 set output 'question_2.png'
                 set ylabel "Execution time (in milliseconds)"
@@ -173,6 +188,11 @@ object Question {
             }
         }
 
+        speedUp(result[PARALLEL_ALGO_NAME_WITHOUT_THRESHOLD]!!, result[SERIAL_ALGO_NAME]!! ,File(dir, "es3_$NO_TRESHOLD_SERIAL.data"))
+        speedUp(result[PARALLEL_ALGO_NAME_WITH_THRESHOLD]!!, result[SERIAL_ALGO_NAME]!! ,File(dir, "es3_$TRESHOLD_SERIAL.data"))
+        speedUp(result[PARALLEL_ALGO_NAME_WITHOUT_THRESHOLD]!!, result[ES4_ALGO_NAME]!! ,File(dir, "es3_$NO_TRESHOLD_ES4.data"))
+        speedUp(result[PARALLEL_ALGO_NAME_WITH_THRESHOLD]!!, result[ES4_ALGO_NAME]!! ,File(dir, "es3_$TRESHOLD_ES4.data"))
+
         val gnuPlotFile = File(dir, GNUPLOT_FILE_NAME)
         gnuPlotFile.appendText("""
             
@@ -221,6 +241,12 @@ object Question {
                 set autoscale yfix
                 plot  "es4_$PARALLEL_ALGO_NAME_WITH_THRESHOLD_CENTROID.data" using 1:2 with lines lw 2 title '${PARALLEL_ALGO_NAME_WITH_THRESHOLD_CENTROID.split('_').joinToString(" ")}'
         """.trimIndent())
+    }
+
+    fun speedUp(t1:Set<Pair<Int,Duration>>, tn:Set<Pair<Int,Duration>>, file:File){
+        t1.zip(tn).forEach { 
+            file.appendText("${it.first}, ${it.first.second.toMillis() / it.second.second.toMillis()}")
+        }
     }
 
     fun getExecutionTime( funToExecute : () -> Unit):Duration{
