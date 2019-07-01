@@ -71,7 +71,7 @@ object Question {
                 set xlabel "Number of Points"
                 set autoscale xfix
                 set autoscale yfix
-                plot  "es1_$PARALLEL_ALGO_NAME_WITHOUT_THRESHOLD.data" using 1:2 with lines lw 2 title '${PARALLEL_ALGO_NAME_WITHOUT_THRESHOLD.split('_').joinToString(" ")}}', "es1_$PARALLEL_ALGO_NAME_WITH_THRESHOLD.data" using 1:2 with lines lw 2 title '${PARALLEL_ALGO_NAME_WITH_THRESHOLD.split('_').joinToString (" ")}', "es1_$SERIAL_ALGO_NAME.data" using 1:2 with lines lw 2 title '$SERIAL_ALGO_NAME', "es1_$ES4_ALGO_NAME.data" using 1:2 with lines lw 2 title '$ES4_ALGO_NAME'
+                plot  "es1_$PARALLEL_ALGO_NAME_WITHOUT_THRESHOLD.data" using 1:2 with lines lw 2 title '${PARALLEL_ALGO_NAME_WITHOUT_THRESHOLD.split('_').joinToString(" ")}', "es1_$PARALLEL_ALGO_NAME_WITH_THRESHOLD.data" using 1:2 with lines lw 2 title '${PARALLEL_ALGO_NAME_WITH_THRESHOLD.split('_').joinToString (" ")}', "es1_$SERIAL_ALGO_NAME.data" using 1:2 with lines lw 2 title '$SERIAL_ALGO_NAME', "es1_$ES4_ALGO_NAME.data" using 1:2 with lines lw 2 title '$ES4_ALGO_NAME'
         """.trimIndent())
     }
 
